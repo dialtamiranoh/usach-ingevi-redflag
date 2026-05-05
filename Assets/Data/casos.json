@@ -1,0 +1,149 @@
+{
+  "casos": [
+    {
+      "id": "#00142",
+      "tipo": "KYC",
+      "prioridad": "ALTA",
+      "cliente": {
+        "nombre": "Juan Pérez Silva",
+        "rut": "12.345.678-9",
+        "nacionalidad": "Chilena",
+        "actividad": "Comerciante",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": false,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Mi actividad es el comercio de productos importados al por mayor.",
+        "origen_fondos": "Los fondos provienen de mi negocio de importación registrado en Chile.",
+        "esPEP": "No, no tengo ninguna vinculación con cargos políticos.",
+        "cuentasExtranjero": "No tengo cuentas en el extranjero."
+      },
+      "discrepancias": ["domicilioVerificado"],
+      "decisionCorrecta": "ESCALAR",
+      "normativaAplicable": "Circular UAF N°62 — Art. 8",
+      "explicacion": "El domicilio no pudo ser verificado. Según la normativa vigente, casos con información incompleta deben escalarse al oficial de cumplimiento."
+    },
+    {
+      "id": "#00143",
+      "tipo": "AML",
+      "prioridad": "ALTA",
+      "cliente": {
+        "nombre": "Empresa Fantasma SpA",
+        "rut": "76.543.210-K",
+        "nacionalidad": "Chilena",
+        "actividad": "Servicios de consultoría",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": false
+      },
+      "respuestasCliente": {
+        "actividad": "Prestamos servicios de consultoría general a empresas.",
+        "origen_fondos": "Los fondos provienen de honorarios de clientes nacionales.",
+        "esPEP": "No aplica, somos una empresa.",
+        "cuentasExtranjero": "No manejamos cuentas en el extranjero."
+      },
+      "discrepancias": ["actividadConcuerda"],
+      "decisionCorrecta": "RECHAZAR",
+      "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62",
+      "explicacion": "La empresa declara consultoría pero sus transacciones muestran movimientos de efectivo en múltiples depósitos bajo USD 10.000 (smurfing). Actividad incompatible con el perfil. Debe rechazarse y generarse un ROS."
+    },
+    {
+      "id": "#00144",
+      "tipo": "KYC",
+      "prioridad": "MEDIA",
+      "cliente": {
+        "nombre": "María González Rojas",
+        "rut": "15.234.567-3",
+        "nacionalidad": "Chilena",
+        "actividad": "Funcionaria pública — Ministerio de Hacienda",
+        "esPEP": true
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Soy analista en el Ministerio de Hacienda hace 8 años.",
+        "origen_fondos": "Mi sueldo como funcionaria pública y un pequeño negocio familiar.",
+        "esPEP": "Sí, soy funcionaria pública de nivel directivo.",
+        "cuentasExtranjero": "No tengo cuentas en el extranjero."
+      },
+      "discrepancias": [],
+      "decisionCorrecta": "ESCALAR",
+      "normativaAplicable": "Circular UAF N°62 — PEP Screening",
+      "explicacion": "La clienta es PEP (Persona Expuesta Políticamente). Aunque sus documentos están en orden, la normativa exige Enhanced Due Diligence (EDD) obligatorio para PEPs, lo que requiere aprobación del oficial de cumplimiento."
+    },
+    {
+      "id": "#00145",
+      "tipo": "Compliance",
+      "prioridad": "BAJA",
+      "cliente": {
+        "nombre": "Carlos Muñoz Herrera",
+        "rut": "10.987.654-1",
+        "nacionalidad": "Chilena",
+        "actividad": "Ingeniero civil independiente",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Trabajo como ingeniero civil independiente con varios proyectos activos.",
+        "origen_fondos": "Honorarios de proyectos de construcción con facturas emitidas.",
+        "esPEP": "No, no tengo ninguna vinculación con cargos políticos.",
+        "cuentasExtranjero": "No tengo cuentas en el extranjero."
+      },
+      "discrepancias": [],
+      "decisionCorrecta": "APROBAR",
+      "normativaAplicable": "Ley 19.913 — Debida Diligencia Estándar",
+      "explicacion": "El cliente cumple todos los requisitos de debida diligencia estándar. Documentos vigentes, actividad coherente con ingresos, no es PEP y no presenta señales de alerta. Puede aprobarse el onboarding."
+    },
+    {
+      "id": "#00146",
+      "tipo": "AML",
+      "prioridad": "ALTA",
+      "cliente": {
+        "nombre": "Roberto Sánchez Vidal",
+        "rut": "13.456.789-5",
+        "nacionalidad": "Venezolana",
+        "actividad": "Importador de electrodomésticos",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": false,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Importo electrodomésticos desde China y los distribuyo en Chile.",
+        "origen_fondos": "Ingresos por ventas de mi negocio de importación.",
+        "esPEP": "No, no tengo ninguna vinculación política.",
+        "cuentasExtranjero": "Tengo una cuenta operativa en China para pagar proveedores."
+      },
+      "discrepancias": ["fotoCoincide"],
+      "decisionCorrecta": "RECHAZAR",
+      "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62 — Sanctions Screening",
+      "explicacion": "La foto del documento no coincide con la persona presente, lo que constituye una posible suplantación de identidad. Adicionalmente declara cuenta en el extranjero no informada previamente. Debe rechazarse y generarse un reporte de operación sospechosa (ROS)."
+    }
+  ]
+}
