@@ -12,23 +12,46 @@ Red Flag es un serious game 3D desarrollado en Unity que gamifica el entrenamien
 
 ---
 
+## Ramas
+
+| Rama | Descripción |
+|---|---|
+| `main` | Versión estable del proyecto |
+| `dev_deltatime` | Sistema de cámaras con 3 vistas y movimiento con delta time |
+
+---
+
+## Mecánicas implementadas
+
+- **Vista Cliente** — vista por defecto del analista frente al cliente 3D. Click derecho para mirar alrededor libremente con límites naturales.
+- **Vista Monitor** (tecla E) — zoom al monitor del escritorio con panel de Documentos y Evidencia (KYC, AML, tabs).
+- **Vista Notepad** (tecla Q) — zoom al notepad del escritorio con panel de Expediente del caso.
+- **Esc** — vuelve a la vista del cliente.
+- **Clic en cliente** — abre panel de diálogo con preguntas predefinidas.
+- **Clic en campos del expediente** — genera preguntas automáticas al cliente.
+- **APROBAR / ESCALAR / RECHAZAR** — decisiones con consecuencias en el puntaje.
+
+---
+
 ## Requisitos previos
 
-Antes de clonar el repositorio asegúrate de tener instalado:
-
 - [Unity Hub](https://unity.com/download)
-- **Unity 6.4** (6000.4.1f1) con los módulos **Web** y **Windows**
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) con el workload **Game development with Unity**
+- **Unity 6.4** (6000.4.1f1) con módulos **Web** y **Windows**
+- [Visual Studio 2022](https://visualstudio.microsoft.com/) con workload **Game development with Unity**
 - [Git](https://git-scm.com/)
 
 ---
 
 ## Clonar el repositorio
 
-Abre una terminal y ejecuta:
-
 ```bash
 git clone https://github.com/dialtamiranoh/usach-ingevi-redflag.git
+```
+
+Para clonar una rama específica:
+
+```bash
+git clone -b dev_deltatime https://github.com/dialtamiranoh/usach-ingevi-redflag.git
 ```
 
 ---
@@ -37,9 +60,8 @@ git clone https://github.com/dialtamiranoh/usach-ingevi-redflag.git
 
 1. Abre **Unity Hub**
 2. Haz clic en **Add → Add project from disk**
-3. Navega a la carpeta `usach-ingevi-redflag/` que clonaste
-4. Selecciónala y haz clic en **Open**
-5. Unity Hub detectará automáticamente la versión 6.4 — haz clic en **Open with Unity 6.4**
+3. Navega a la carpeta `usach-ingevi-redflag/`
+4. Selecciónala y haz clic en **Open with Unity 6.4**
 
 > ⚠️ La primera apertura puede tardar varios minutos mientras Unity regenera la carpeta `Library/`.
 
@@ -47,9 +69,15 @@ git clone https://github.com/dialtamiranoh/usach-ingevi-redflag.git
 
 ## Configurar Visual Studio
 
-1. En Unity ve a **Edit → Preferences → External Tools**
-2. En **External Script Editor** selecciona **Visual Studio 2022**
-3. Haz clic en **Regenerate project files**
+1. **Edit → Preferences → External Tools**
+2. **External Script Editor → Visual Studio 2022**
+3. Clic en **Regenerate project files**
+
+---
+
+## Abrir la escena principal
+
+En el panel **Project** navega a `Assets/Scenes/` y doble clic en **MainScene**.
 
 ---
 
@@ -57,55 +85,31 @@ git clone https://github.com/dialtamiranoh/usach-ingevi-redflag.git
 
 ```
 Assets/
-├── Audio/          # Efectos de sonido y música
+├── Audio/
 ├── Data/
-│   └── casos.json  # Banco de casos KYC/AML/Compliance
-├── Materials/      # Materiales y shaders
+│   └── casos.json          # Banco de casos KYC/AML/Compliance
+├── Materials/
 ├── Models/
 │   ├── VNB - Office Set/   # Assets de oficina low-poly
 │   └── LowPolyPeople/      # Personajes low-poly
-├── Prefabs/        # Prefabs reutilizables
+├── Prefabs/
 ├── Scenes/
-│   └── MainScene   # Escena principal del juego
+│   └── MainScene
 ├── Scripts/
-│   ├── UIManager.cs    # Gestión de la UI y lógica de turnos
-│   └── CaseManager.cs  # Carga y gestión de casos desde JSON
-├── Settings/       # Configuración de render pipeline (URP)
+│   ├── UIManager.cs        # Gestión de UI, turnos y puntaje
+│   ├── CaseManager.cs      # Carga y gestión de casos desde JSON
+│   └── CameraController.cs # Sistema de 3 vistas con delta time
+├── Settings/
 └── UI/
-    ├── RedFlagUI.uxml  # Estructura de la interfaz
-    └── RedFlagUI.uss   # Estilos de la interfaz
+    ├── RedFlagUI.uxml
+    └── RedFlagUI.uss
 ```
-
----
-
-## Abrir la escena principal
-
-1. En el panel **Project** navega a `Assets/Scenes/`
-2. Doble clic en **MainScene**
-
----
-
-## Ejecutar el juego en el editor
-
-1. Asegúrate de tener **MainScene** abierta
-2. Presiona el botón **▶ Play** en la barra superior
-3. Para detener presiona **▶ Play** nuevamente
-
----
-
-## Exportar a WebGL
-
-1. Ve a **File → Build Profiles**
-2. Selecciona **Web** en la lista de plataformas
-3. Verifica que **MainScene** esté en la Scene List
-4. Haz clic en **Build And Run**
-5. Selecciona una carpeta de destino (ej. `Builds/WebGL/`)
 
 ---
 
 ## Agregar nuevos casos
 
-Los casos del juego se definen en `Assets/Data/casos.json`. Para agregar un nuevo caso copia la siguiente estructura y completa los campos:
+En `Assets/Data/casos.json` agrega casos con esta estructura:
 
 ```json
 {
@@ -127,15 +131,15 @@ Los casos del juego se definen en `Assets/Data/casos.json`. Para agregar un nuev
     "actividadConcuerda": true
   },
   "respuestasCliente": {
-    "actividad": "Respuesta del cliente sobre su actividad.",
-    "origen_fondos": "Respuesta del cliente sobre origen de fondos.",
-    "esPEP": "Respuesta del cliente sobre PEP.",
-    "cuentasExtranjero": "Respuesta del cliente sobre cuentas extranjeras."
+    "actividad": "Respuesta sobre actividad.",
+    "origen_fondos": "Respuesta sobre origen de fondos.",
+    "esPEP": "Respuesta sobre PEP.",
+    "cuentasExtranjero": "Respuesta sobre cuentas extranjeras."
   },
   "discrepancias": [],
   "decisionCorrecta": "APROBAR",
   "normativaAplicable": "Circular UAF N°62",
-  "explicacion": "Explicación de por qué esta es la decisión correcta."
+  "explicacion": "Explicación de la decisión correcta."
 }
 ```
 
@@ -149,23 +153,27 @@ Los casos del juego se definen en `Assets/Data/casos.json`. Para agregar un nuev
 ## Flujo de desarrollo Git
 
 ```bash
-# Antes de empezar a trabajar — traer últimos cambios
+# Antes de trabajar — traer últimos cambios
 git pull
+
+# Crear rama para nueva funcionalidad
+git checkout -b nombre-de-rama
 
 # Después de hacer cambios
 git add .
 git commit -m "descripción del cambio"
-git push
+git push -u origin nombre-de-rama
 ```
 
 ---
 
-## Próximos pasos (pendientes)
+## Próximos pasos
 
-- [ ] Feedback de decisión — mostrar si la decisión fue correcta con normativa aplicable
-- [ ] Sistema de scoring real — penalizar decisiones incorrectas
+- [ ] Panel de documentos fijado en pantalla del monitor (World Space Canvas / Render Texture)
+- [ ] Feedback de decisión con normativa aplicable
+- [ ] Sistema de scoring real con penalizaciones
 - [ ] Ampliar banco de casos JSON
-- [ ] Pantalla de inicio y pantalla de fin de jornada
+- [ ] Pantalla de inicio y fin de jornada
 
 ---
 
