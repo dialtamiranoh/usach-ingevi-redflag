@@ -1,0 +1,120 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/RedFlagUI.uss?fileID=7433441132597879392&amp;guid=d6c897fc2923b4c4ea12923fb60f068e&amp;type=3#RedFlagUI"/>
+    <ui:VisualElement name="root" class="root">
+        <ui:VisualElement name="top-bar" class="top-bar">
+            <ui:Label name="label-turno" text="TURNO 1 / 10" class="top-label left-label"/>
+            <ui:Label name="label-titulo" text="RED FLAG" class="top-title"/>
+            <ui:VisualElement class="top-right">
+                <ui:Label name="label-tiempo" text="⏱ 05:00" class="top-label"/>
+                <ui:Label name="label-puntaje" text="★ 0 pts" class="top-label"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="content-area" class="content-area">
+            <ui:VisualElement name="panel-expediente" class="panel panel-left">
+                <ui:Label text="EXPEDIENTE DEL CASO" class="panel-title"/>
+                <ui:VisualElement class="divider"/>
+                <ui:VisualElement class="field-row">
+                    <ui:Label text="N° Caso:" class="field-label"/>
+                    <ui:Label name="caso-id" text="#00142" class="field-value highlight"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="field-row">
+                    <ui:Label text="Tipo de Alerta:" class="field-label"/>
+                    <ui:Label name="caso-tipo" text="KYC — Onboarding" class="field-value tag-kyc"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="field-row">
+                    <ui:Label text="Prioridad:" class="field-label"/>
+                    <ui:Label name="caso-prioridad" text="⚠ ALTA" class="field-value tag-alta"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="divider"/>
+                <ui:Label text="SOLICITANTE" class="section-subtitle"/>
+                <ui:VisualElement name="field-nombre" class="field-row field-clickable">
+                    <ui:Label text="Nombre:" class="field-label"/>
+                    <ui:Label name="cliente-nombre" text="Juan Pérez Silva" class="field-value"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="field-rut" class="field-row field-clickable">
+                    <ui:Label text="RUT:" class="field-label"/>
+                    <ui:Label name="cliente-rut" text="12.345.678-9" class="field-value"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="field-nacionalidad" class="field-row field-clickable">
+                    <ui:Label text="Nacionalidad:" class="field-label"/>
+                    <ui:Label name="cliente-nacionalidad" text="Chilena" class="field-value"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="field-actividad" class="field-row field-clickable">
+                    <ui:Label text="Actividad:" class="field-label"/>
+                    <ui:Label name="cliente-actividad" text="Comerciante" class="field-value"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="field-pep" class="field-row field-clickable">
+                    <ui:Label text="PEP:" class="field-label"/>
+                    <ui:Label name="cliente-pep" text="No declarado" class="field-value tag-warning"/>
+                </ui:VisualElement>
+                <ui:VisualElement class="divider"/>
+                <ui:Label text="NOTAS DEL ANALISTA" class="section-subtitle"/>
+                <ui:TextField name="notas-analista" multiline="true" class="notas-input"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="panel-centro" class="panel-centro">
+                <ui:VisualElement name="dialogo-panel" class="dialogo-panel hidden">
+                    <ui:Label name="dialogo-respuesta" text="" class="dialogo-texto"/>
+                    <ui:VisualElement class="divider"/>
+                    <ui:Label text="PREGUNTAR:" class="section-subtitle"/>
+                    <ui:Button name="pregunta-1" text="¿Cuál es su actividad económica?" class="pregunta-btn"/>
+                    <ui:Button name="pregunta-2" text="¿Cuál es el origen de sus fondos?" class="pregunta-btn"/>
+                    <ui:Button name="pregunta-3" text="¿Es usted PEP o familiar de PEP?" class="pregunta-btn"/>
+                    <ui:Button name="pregunta-4" text="¿Tiene cuentas en el extranjero?" class="pregunta-btn"/>
+                    <ui:Button name="dialogo-cerrar" text="✕ Cerrar" class="dialogo-cerrar"/>
+                </ui:VisualElement>
+                <ui:Label name="hint-cliente" text="▼ Haz clic en el cliente" class="hint-cliente"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="panel-documentos" class="panel panel-right">
+                <ui:Label text="DOCUMENTOS Y EVIDENCIA" class="panel-title"/>
+                <ui:VisualElement class="divider"/>
+                <ui:VisualElement class="tabs-container">
+                    <ui:Button name="tab-identidad" text="Identidad" class="tab tab-active"/>
+                    <ui:Button name="tab-transacciones" text="Transacciones" class="tab"/>
+                    <ui:Button name="tab-historial" text="Historial" class="tab"/>
+                    <ui:Button name="tab-sanciones" text="Sanciones" class="tab"/>
+                </ui:VisualElement>
+                <ui:VisualElement name="tab-content" class="tab-content">
+                    <ui:VisualElement name="content-identidad" class="doc-section">
+                        <ui:Label text="VERIFICACIÓN DE IDENTIDAD" class="section-subtitle"/>
+                        <ui:VisualElement class="checklist">
+                            <ui:VisualElement class="check-row">
+                                <ui:Toggle name="check-ci" class="check-toggle"/>
+                                <ui:Label text="Cédula de identidad vigente" class="check-label"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement class="check-row">
+                                <ui:Toggle name="check-foto" class="check-toggle"/>
+                                <ui:Label text="Foto coincide con registros" class="check-label"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement class="check-row">
+                                <ui:Toggle name="check-rut" class="check-toggle"/>
+                                <ui:Label text="RUT válido y coherente" class="check-label"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement class="check-row">
+                                <ui:Toggle name="check-domicilio" class="check-toggle"/>
+                                <ui:Label text="Domicilio verificado" class="check-label"/>
+                            </ui:VisualElement>
+                            <ui:VisualElement class="check-row">
+                                <ui:Toggle name="check-actividad" class="check-toggle"/>
+                                <ui:Label text="Actividad económica coherente" class="check-label"/>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="divider"/>
+                        <ui:Label text="DISCREPANCIAS DETECTADAS" class="section-subtitle"/>
+                        <ui:VisualElement name="discrepancias-container" class="discrepancias-box">
+                            <ui:Label text="Selecciona los ítems inconsistentes para registrar discrepancias." class="discrepancia-hint"/>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="bottom-bar" class="bottom-bar">
+            <ui:Label name="label-normativa" text="Circular UAF N°62 — Ley 19.913" class="normativa-label"/>
+            <ui:VisualElement class="action-buttons">
+                <ui:Button name="btn-aprobar" text="✔ APROBAR" class="btn btn-aprobar"/>
+                <ui:Button name="btn-escalar" text="↑ ESCALAR" class="btn btn-escalar"/>
+                <ui:Button name="btn-rechazar" text="✘ RECHAZAR" class="btn btn-rechazar"/>
+            </ui:VisualElement>
+            <ui:Label name="label-estado" text="Pendiente de resolución" class="estado-label"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
