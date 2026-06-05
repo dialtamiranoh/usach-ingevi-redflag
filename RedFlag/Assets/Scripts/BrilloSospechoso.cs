@@ -45,4 +45,9 @@ public class BrilloSospechoso : MonoBehaviour
         foreach (Material mat in materiales)
             mat.SetColor("_EmissionColor", Color.black);
     }
+
+    public void ReiniciarBrillo()
+    {
+        activo = true;
+    }
 }

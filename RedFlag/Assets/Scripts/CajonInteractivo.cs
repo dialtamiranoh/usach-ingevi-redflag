@@ -46,6 +46,8 @@ public class CajonInteractivo : MonoBehaviour
 
     void Update()
     {
+
+
         // Raycast desde la cámara al mouse
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
@@ -65,6 +67,7 @@ public class CajonInteractivo : MonoBehaviour
         }
 
         bool hayObjetoArrastrado = HayObjetoArrastrado();
+        Debug.Log($"mouseEncima: {mouseEncima} | arrastrado: {hayObjetoArrastrado}");
 
         if (mouseEncima)
         {

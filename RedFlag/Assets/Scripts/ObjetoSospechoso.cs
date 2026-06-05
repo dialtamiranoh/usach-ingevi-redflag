@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ObjetoSospechoso : MonoBehaviour
@@ -11,12 +13,22 @@ public class ObjetoSospechoso : MonoBehaviour
         PostIt,
         Llaves,
         Credencial,
+        Carpeta,
+        Documento,
+        Tarjeta,
         // Sobornos — categoría especial
         SobreEfectivo,
-        TarjetaPrepagada,
         CajaRegalo
     }
     public TipoObjeto tipo;
+
+
+    [Header("Respawn")]
+    public float tiempoRespawnMin = 15f;
+    public float tiempoRespawnMax = 45f;
+
+    private Vector3 posicionInicial;
+    private Quaternion rotacionInicial;
 
     [Header("Configuración")]
     public float tiempoLimite = 30f;
@@ -30,12 +42,18 @@ public class ObjetoSospechoso : MonoBehaviour
     public bool estaArrastrado = false;
     private bool fueGuardado = false;
     private bool penalizado = false;
+    private bool fueInteractuado = false;
 
     private Rigidbody rb;
     private AudioSource audioSource;
+    private BrilloSospechoso brillo;
+    private Camera cam;
     private Camera camaraActual;
     private Vector3 offsetArrastre;
     private float distanciaCamara;
+    private Plane planoArrastre;
+
+
 
     public enum CategoriaObjeto { Seguridad, Soborno }
     public CategoriaObjeto categoria;
@@ -49,14 +67,21 @@ public class ObjetoSospechoso : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
+        brillo = GetComponent<BrilloSospechoso>();
+        cam = Camera.main;
+        camaraActual = Camera.main;
+        manager = FindObjectOfType<ObjetosManager>(); // mover aquí desde Start
     }
+
 
     void Start()
     {
-        manager = FindObjectOfType<ObjetosManager>();
-        camaraActual = Camera.main;
+        posicionInicial = transform.position;
+        rotacionInicial = transform.rotation;
 
-        // Animación de spawn: escala de 0 a tamaño real
+        if (categoria == CategoriaObjeto.Soborno)
+            tiempoLimite = 20f;
+
         Vector3 escalaFinal = transform.localScale;
         transform.localScale = Vector3.zero;
         StartCoroutine(AnimarSpawn(escalaFinal));
@@ -64,30 +89,66 @@ public class ObjetoSospechoso : MonoBehaviour
 
     void Update()
     {
-        // Contar tiempo si no fue guardado ni penalizado
         if (!fueGuardado && !penalizado)
         {
             timerIgnorado += Time.deltaTime;
             if (timerIgnorado >= tiempoLimite)
-                AplicarPenalizacion();
+            {
+                if (categoria == CategoriaObjeto.Soborno)
+                    SobornoIgnorado();  // timer llegó a 20 seg sin click = correcto
+                else
+                    AplicarPenalizacion();
+            }
         }
     }
 
     // ── Arrastre con mouse ──────────────────────────────────────
 
+
     void OnMouseDown()
     {
         if (fueGuardado || penalizado) return;
 
-        estaArrastrado = true;
-        // Congelar física durante el arrastre
-        rb.isKinematic = true;
+        if (categoria == CategoriaObjeto.Soborno)
+        {
+            // Click en soborno = penalización
+            SobornoAceptado();
+            return;
+        }
 
+        // Objetos de seguridad — drag normal
+        estaArrastrado = true;
+        rb.isKinematic = true;
         distanciaCamara = Vector3.Distance(
             camaraActual.transform.position, transform.position);
-        offsetArrastre = transform.position -
-            ObtenerPosicionMundo();
+        offsetArrastre = transform.position - ObtenerPosicionMundo();
     }
+
+    void SobornoAceptado()
+    {
+        penalizado = true;
+        brillo?.DetenerBrillo();
+
+        // Penalización por aceptar soborno
+        ScoreManager score = FindObjectOfType<ScoreManager>();
+        score?.AgregarPuntajeIndividual(-300);
+        Debug.Log("[LOG] Soborno aceptado — penalización -300");
+
+        StartCoroutine(FadeYRespawn());
+    }
+
+    void SobornoIgnorado()
+    {
+        penalizado = true;
+        brillo?.DetenerBrillo();
+
+        ScoreManager score = FindObjectOfType<ScoreManager>();
+        score?.AgregarPuntajeIndividual(100);
+        Debug.Log("[LOG] Soborno ignorado correctamente +100");
+
+        StartCoroutine(FadeYRespawn());
+    }
+
 
     void OnMouseDrag()
     {
@@ -95,20 +156,19 @@ public class ObjetoSospechoso : MonoBehaviour
         transform.position = ObtenerPosicionMundo() + offsetArrastre;
     }
 
+
     void OnMouseUp()
     {
         if (!estaArrastrado) return;
-
         estaArrastrado = false;
-        // Reactivar física al soltar — el objeto cae y rebota
         rb.isKinematic = false;
     }
 
     Vector3 ObtenerPosicionMundo()
     {
-        // Convierte posición del mouse a coordenadas 3D
-        // manteniendo la distancia original a la cámara
-        Vector3 posMouse = Mouse.current.position.ReadValue();
+        Vector3 posMouse = Mouse.current != null
+            ? Mouse.current.position.ReadValue()
+            : new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         posMouse.z = distanciaCamara;
         return camaraActual.ScreenToWorldPoint(posMouse);
     }
@@ -121,37 +181,125 @@ public class ObjetoSospechoso : MonoBehaviour
             GuardarObjeto();
     }
 
+
+
+
     void GuardarObjeto()
     {
         fueGuardado = true;
         rb.isKinematic = true;
 
-        // Detener brillo al ser recogido
-        GetComponent<BrilloSospechoso>()?.DetenerBrillo();
+        brillo?.DetenerBrillo();
 
-        // Feedback visual: destello verde
-        GetComponent<Renderer>().material.color = Color.green;
-
-        // Feedback sonoro
         if (sfxRecogido != null)
             audioSource.PlayOneShot(sfxRecogido);
 
         manager?.OnObjetoGuardado(this);
+
+        // Usar el scoreManager del manager en lugar de buscarlo de nuevo
+        ScoreManager score = FindObjectOfType<ScoreManager>();
+        if (score != null)
+        {
+            score.AgregarPuntajeIndividual(50);
+            Debug.Log("[LOG] Objeto guardado +50 puntos");
+        }
+        else
+            Debug.LogWarning("[LOG] ScoreManager no encontrado");
+
+        StartCoroutine(FadeYRespawn());
+    }
+
+    IEnumerator FadeYRespawn()
+    {
+        yield return StartCoroutine(FadeOut());
+        gameObject.SetActive(false);
+
+        float espera = categoria == CategoriaObjeto.Soborno
+            ? 20f
+            : Random.Range(tiempoRespawnMin, tiempoRespawnMax);
+
+        Debug.Log($"[LOG] Programando respawn en {espera} seg — manager: {manager}");
+        manager?.ProgramarRespawn(this, espera);
+    }
+
+
+
+
+    public void Respawn()
+    {
+        if (manager == null)
+            manager = FindObjectOfType<ObjetosManager>();
+
+        fueGuardado = false;
+        penalizado = false;
+        timerIgnorado = 0f;
+        fueInteractuado = false;
+
+        transform.position = posicionInicial;
+        transform.rotation = rotacionInicial;
+        rb.isKinematic = false;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        gameObject.SetActive(true);
+        Vector3 escalaFinal = transform.localScale;
+        transform.localScale = Vector3.zero;
+        if (brillo != null)
+        {
+            brillo.enabled = true;
+            brillo.ReiniciarBrillo();
+        }
+        StartCoroutine(AnimarSpawn(escalaFinal));
+    }
+
+    System.Collections.IEnumerator FadeOut()
+    {
+        float t = 0f;
+        float duracion = 0.5f;
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+
+        // Guardar colores originales
+        var coloresOriginales = new System.Collections.Generic.List<Color>();
+        foreach (Renderer r in renderers)
+            foreach (Material m in r.materials)
+                coloresOriginales.Add(m.color);
+
+        while (t < duracion)
+        {
+            t += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, t / duracion);
+            int idx = 0;
+            foreach (Renderer r in renderers)
+                foreach (Material m in r.materials)
+                {
+                    Color c = coloresOriginales[idx++];
+                    m.color = new Color(c.r, c.g, c.b, alpha);
+                }
+            yield return null;
+        }
     }
 
     void AplicarPenalizacion()
     {
         penalizado = true;
+        brillo?.DetenerBrillo();
 
-        // Feedback sonoro de penalización
-        if (sfxPenalizacion != null)
-            audioSource.PlayOneShot(sfxPenalizacion);
-
-        // Notificar al manager
-        manager?.OnObjetoIgnorado(this);
-
-        // Fade out y destruir
-        StartCoroutine(FadeYDestruir());
+        if (categoria == CategoriaObjeto.Soborno)
+        {
+            // Soborno ignorado = correcto, suma puntaje
+            ScoreManager score = FindObjectOfType<ScoreManager>();
+            score?.AgregarPuntajeIndividual(100);
+            Debug.Log($"[LOG] Soborno ignorado correctamente +100");
+            StartCoroutine(FadeYRespawn());
+        }
+        else
+        {
+            // Objeto seguridad ignorado = penalización
+            if (sfxPenalizacion != null)
+                audioSource.PlayOneShot(sfxPenalizacion);
+            manager?.OnObjetoIgnorado(this);
+            StartCoroutine(FadeYDestruir());
+        }
     }
 
     // ── Coroutines ───────────────────────────────────────────────
@@ -174,18 +322,41 @@ public class ObjetoSospechoso : MonoBehaviour
     {
         float t = 0f;
         float duracion = 0.5f;
-        Renderer rend = GetComponent<Renderer>();
-        Color colorBase = rend.material.color;
+
+        // Buscar renderers en hijos también
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+
+        var coloresOriginales = new System.Collections.Generic.List<Color>();
+        foreach (Renderer r in renderers)
+            foreach (Material m in r.materials)
+                coloresOriginales.Add(m.color);
 
         while (t < duracion)
         {
             t += Time.deltaTime;
             float alpha = Mathf.Lerp(1f, 0f, t / duracion);
-            rend.material.color = new Color(
-                colorBase.r, colorBase.g, colorBase.b, alpha);
+            int idx = 0;
+            foreach (Renderer r in renderers)
+                foreach (Material m in r.materials)
+                {
+                    Color c = coloresOriginales[idx++];
+                    m.color = new Color(c.r, c.g, c.b, alpha);
+                }
             yield return null;
         }
         Destroy(gameObject);
+    }
+
+
+    public void ProgramarRespawn(ObjetoSospechoso obj, float tiempo)
+    {
+        StartCoroutine(RespawnCoroutine(obj, tiempo));
+    }
+
+    IEnumerator RespawnCoroutine(ObjetoSospechoso obj, float tiempo)
+    {
+        yield return new WaitForSeconds(tiempo);
+        obj.Respawn();
     }
 
     // Getter para el log
