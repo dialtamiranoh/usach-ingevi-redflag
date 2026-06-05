@@ -6177,6 +6177,58 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3042016231070954709, guid: a55c555f579cc3647bf8aaf8116217a9, type: 3}
   m_PrefabInstance: {fileID: 346052642}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1242411713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1242411715}
+  - component: {fileID: 1242411714}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1242411714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242411713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 903d58e39b9ae0d4ca87d9637c2ee293, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  musicaAmbiente: {fileID: 8300000, guid: 46f577e5fa6ae2340aabc20254eac320, type: 3}
+  volumenMusica: 0.4
+  sfxAprobar: {fileID: 8300000, guid: 753d4dc06f835844db5cd5648eb8986b, type: 3}
+  sfxEscalar: {fileID: 8300000, guid: 9e995d4a0a50e264d8dfc280e78492c2, type: 3}
+  sfxRechazar: {fileID: 8300000, guid: 3df2580dcd6511242bc02e70cbbf0e4a, type: 3}
+  sfxObjetoRecogido: {fileID: 8300000, guid: 9e995d4a0a50e264d8dfc280e78492c2, type: 3}
+  sfxPenalizacion: {fileID: 8300000, guid: 3df2580dcd6511242bc02e70cbbf0e4a, type: 3}
+  sfxSoborno: {fileID: 8300000, guid: 3df2580dcd6511242bc02e70cbbf0e4a, type: 3}
+--- !u!4 &1242411715
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242411713}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.46939, y: 0.96531, z: -1.8913}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1253078323
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10143,3 +10195,4 @@ SceneRoots:
   - {fileID: 743677133}
   - {fileID: 1651598667}
   - {fileID: 1150326307}
+  - {fileID: 1242411715}

@@ -25,7 +25,7 @@ public class ObjetosManager : MonoBehaviour
     public float intervaloMinimo = 20f;
     public float intervaloMaximo = 20f;
     public int maxObjetosSimultaneos = 3;
-    public float alturaEscritorio = 0.5f; // ajusta este valor
+    public float alturaEscritorio = -0.1538271f; // ajusta este valor
 
     [Header("Puntaje")]
     public int puntosReportar = 150;
@@ -93,17 +93,28 @@ public class ObjetosManager : MonoBehaviour
         prefabPendrive, prefabCelular, prefabPostIt,
         prefabDocumento, prefabLlave, prefabTarjeta, prefabCarpeta
     };
-        GameObject prefabElegido = prefabs[Random.Range(0, prefabs.Length)];
 
-        // Verificar que el punto de spawn sigue existiendo
+        // Filtrar prefabs null
+        var prefabsValidos = System.Array.FindAll(prefabs, p => p != null);
+
+        Debug.Log($"[SPAWN] Prefabs válidos: {prefabsValidos.Length}");
+
+        if (prefabsValidos.Length == 0)
+        {
+            Debug.LogWarning("[SPAWN] No hay prefabs válidos asignados");
+            return;
+        }
+
+        GameObject prefabElegido = prefabsValidos[Random.Range(0, prefabsValidos.Length)];
+        Debug.Log($"[SPAWN] Spawneando: {prefabElegido.name}");
+
         Transform punto = null;
         foreach (Transform p in puntosSpawn)
-        {
             if (p != null) { punto = p; break; }
-        }
         if (punto == null) return;
 
-        GameObject obj = Instantiate(prefabElegido, punto.position, Quaternion.identity);
+        Vector3 posSpawn = new Vector3(punto.position.x, alturaEscritorio, punto.position.z);
+        GameObject obj = Instantiate(prefabElegido, posSpawn, Quaternion.identity);
         ObjetoSospechoso comp = obj.GetComponent<ObjetoSospechoso>();
         if (comp != null)
             objetosActivos.Add(comp);

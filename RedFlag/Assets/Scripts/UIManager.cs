@@ -235,9 +235,21 @@ public class UIManager : MonoBehaviour
     void TomarDecision(string decision)
     {
         if (!juegoActivo) return;
-        if (decision == "APROBADO") puntaje += 10;
-        else if (decision == "RECHAZADO") puntaje += 15;
-        else if (decision == "ESCALADO") puntaje += 5;
+        if (decision == "APROBADO")
+        {
+            puntaje += 10;
+            AudioManager.Instance?.SFXAprobar();
+        }
+        else if (decision == "RECHAZADO")
+        {
+            puntaje += 15;
+            AudioManager.Instance?.SFXRechazar();
+        }
+        else if (decision == "ESCALADO")
+        {
+            puntaje += 5;
+            AudioManager.Instance?.SFXEscalar();
+        }
 
         labelEstado.text = $"Caso resuelto: {decision}";
         ActualizarUI();
@@ -272,6 +284,9 @@ public class UIManager : MonoBehaviour
         labelTiempo.text = $"⏱ {min:00}:{seg:00}";
     }
 
+
+
+
     public void CargarCaso(CasoData caso)
     {
         casoId.text = caso.id;
@@ -299,6 +314,12 @@ public class UIManager : MonoBehaviour
     {
         // Por ahora solo log — implementación completa después
         Debug.Log($"[UI] Objeto listo para reportar: {obj.ObtenerNombreTipo()}");
+    }
+
+    public void MostrarDecisionSoborno(ObjetoSospechoso obj)
+    {
+        // Por ahora solo log — implementación del panel después
+        Debug.Log($"[UI] Panel soborno: {obj.ObtenerNombreTipo()}");
     }
 
     void CambiarPersonaje()
