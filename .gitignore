@@ -11,6 +11,15 @@
 /[Mm]emory[Cc]aptures/
 /[Ee]rror[Rr]eporter/
 
+# Paquetes de terceros ignorados
+RedFlag/Assets/Gabies_Assets/
+RedFlag/Assets/HorrorPuzzleItems/
+RedFlag/Assets/JustPlay/
+RedFlag/Assets/PinkTea/
+RedFlag/Assets/Presents/
+RedFlag/Assets/Akduman/
+RedFlag/Assets/Universal UI, Game & Notification Sound Effects/
+
 # ===========================
 # Visual Studio
 # ===========================
