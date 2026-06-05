@@ -27,7 +27,7 @@ public class ObjetoSospechoso : MonoBehaviour
     public GameObject alertaVFX; // partícula o luz parpadeante opcional
 
     private float timerIgnorado = 0f;
-    private bool estaArrastrado = false;
+    public bool estaArrastrado = false;
     private bool fueGuardado = false;
     private bool penalizado = false;
 

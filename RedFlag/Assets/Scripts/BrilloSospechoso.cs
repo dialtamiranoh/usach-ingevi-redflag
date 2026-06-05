@@ -36,8 +36,7 @@ public class BrilloSospechoso : MonoBehaviour
         float intensidad = Mathf.Lerp(intensidadMin, intensidadMax, t);
 
         foreach (Material mat in materiales)
-            mat.SetColor("_EmissionColor",
-                colorBrillo * Mathf.Pow(2f, intensidad));
+            mat.SetColor("_EmissionColor", colorBrillo * intensidad);
     }
 
     public void DetenerBrillo()
