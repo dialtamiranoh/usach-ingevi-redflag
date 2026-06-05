@@ -20,6 +20,12 @@ public class UIManager : MonoBehaviour
     [Header("Camera")]
     public CameraController cameraController;
 
+
+    // Feedback visual
+    private VisualElement flashPantalla;
+    private VisualElement selloContainer;
+    private Label selloTexto;
+
     // Top bar
     private Label labelTurno;
     private Label labelTiempo;
@@ -99,6 +105,10 @@ public class UIManager : MonoBehaviour
         labelTiempo   = root.Q<Label>("label-tiempo");
         labelPuntaje  = root.Q<Label>("label-puntaje");
         labelEstado   = root.Q<Label>("label-estado");
+
+        flashPantalla       = root.Q<VisualElement>("flash-pantalla");
+        selloContainer      = root.Q<VisualElement>("sello-container");
+        selloTexto          = root.Q<Label>("sello-texto");
 
         casoId              = root.Q<Label>("caso-id");
         casoTipo            = root.Q<Label>("caso-tipo");
@@ -235,6 +245,7 @@ public class UIManager : MonoBehaviour
     void TomarDecision(string decision)
     {
         if (!juegoActivo) return;
+
         if (decision == "APROBADO")
         {
             puntaje += 10;
@@ -251,6 +262,8 @@ public class UIManager : MonoBehaviour
             AudioManager.Instance?.SFXEscalar();
         }
 
+        MostrarFeedbackDecision(decision);
+
         labelEstado.text = $"Caso resuelto: {decision}";
         ActualizarUI();
         Invoke(nameof(SiguienteTurno), 0.5f);
@@ -258,16 +271,28 @@ public class UIManager : MonoBehaviour
 
     void SiguienteTurno()
     {
-        if (turnoActual >= turnoTotal) { juegoActivo = false; labelEstado.text = "Jornada finalizada"; return; }
+        if (turnoActual >= turnoTotal)
+        {
+            juegoActivo = false;
+            labelEstado.text = "Jornada finalizada";
+            GameManager.Instance?.SetPuntajeFinal(puntaje);
+            Invoke(nameof(IrAResultados), 1.5f);
+            return;
+        }
         turnoActual++;
         tiempoRestante = 300f;
         CerrarDialogo();
-        CambiarPersonaje(); // <- agrega esta línea
+        CambiarPersonaje();
         if (cameraController != null)
             cameraController.CambiarVista(CameraController.VistaActiva.Cliente, true);
         labelEstado.text = "Pendiente de resolución";
         ActualizarUI();
         caseManager.SiguienteCaso();
+    }
+
+    void IrAResultados()
+    {
+        GameManager.Instance?.IrAResultados();
     }
 
     void ActualizarUI()
@@ -376,5 +401,67 @@ public class UIManager : MonoBehaviour
                 bottomBar.RemoveFromClassList("hidden");
                 break;
         }
+    }
+
+    void MostrarFeedbackDecision(string decision)
+    {
+        // Configurar colores y texto según decisión
+        Color colorFlash;
+        string textoSello;
+        string claseSello;
+
+        switch (decision)
+        {
+            case "APROBADO":
+                colorFlash = new Color(0f, 0.8f, 0.3f, 0.3f);
+                textoSello = "✓ APROBADO";
+                claseSello = "sello-aprobado";
+                break;
+            case "RECHAZADO":
+                colorFlash = new Color(0.9f, 0.2f, 0.2f, 0.3f);
+                textoSello = "✗ RECHAZADO";
+                claseSello = "sello-rechazado";
+                break;
+            default: // ESCALADO
+                colorFlash = new Color(0.2f, 0.5f, 1f, 0.3f);
+                textoSello = "↑ ESCALADO";
+                claseSello = "sello-escalado";
+                break;
+        }
+
+        // Aplicar sello
+        selloTexto.text = textoSello;
+        selloTexto.RemoveFromClassList("sello-aprobado");
+        selloTexto.RemoveFromClassList("sello-escalado");
+        selloTexto.RemoveFromClassList("sello-rechazado");
+        selloTexto.AddToClassList(claseSello);
+
+        // Mostrar flash y sello
+        flashPantalla.style.backgroundColor = colorFlash;
+        flashPantalla.RemoveFromClassList("hidden");
+        selloContainer.RemoveFromClassList("hidden");
+
+        StartCoroutine(OcultarFeedback());
+    }
+
+    System.Collections.IEnumerator OcultarFeedback()
+    {
+        yield return new WaitForSeconds(0.8f);
+
+        // Ocultar sello
+        selloContainer.AddToClassList("hidden");
+
+        // Fade out del flash
+        float t = 0f;
+        Color colorBase = flashPantalla.style.backgroundColor.value;
+        while (t < 0.3f)
+        {
+            t += Time.deltaTime;
+            float alpha = Mathf.Lerp(0.3f, 0f, t / 0.3f);
+            flashPantalla.style.backgroundColor = new Color(
+                colorBase.r, colorBase.g, colorBase.b, alpha);
+            yield return null;
+        }
+        flashPantalla.AddToClassList("hidden");
     }
 }

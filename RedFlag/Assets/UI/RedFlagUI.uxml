@@ -1,6 +1,13 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/RedFlagUI.uss?fileID=7433441132597879392&amp;guid=d6c897fc2923b4c4ea12923fb60f068e&amp;type=3#RedFlagUI"/>
     <ui:VisualElement name="root" class="root">
+		<!-- Flash de pantalla -->
+		<ui:VisualElement name="flash-pantalla" class="hidden" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; opacity: 0;" />
+
+		<!-- Sello de decisión -->
+		<ui:VisualElement name="sello-container" class="hidden" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; align-items: center; justify-content: center;">
+			<ui:Label name="sello-texto" text="APROBADO" style="font-size: 72px; -unity-font-style: bold; rotate: -15deg; border-width: 4px; padding: 10px 20px;" />
+		</ui:VisualElement>
         <ui:VisualElement name="top-bar" class="top-bar">
             <ui:Label name="label-turno" text="TURNO 1 / 10" class="top-label left-label"/>
             <ui:Label name="label-titulo" text="RED FLAG" class="top-title"/>

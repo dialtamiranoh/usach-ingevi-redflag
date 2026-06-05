@@ -6,7 +6,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("Música")]
     public AudioClip musicaAmbiente;
-    public float volumenMusica = 0.4f;
+    public float volumenMusica = 0.1f;
 
     [Header("SFX")]
     public AudioClip sfxAprobar;
