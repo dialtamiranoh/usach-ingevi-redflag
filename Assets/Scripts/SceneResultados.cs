@@ -54,7 +54,7 @@ public class SceneResultadosManager : MonoBehaviour
     }
 
     void CargarRanking(VisualElement root)
-    {
+    {   
         var contenedor = root.Q<VisualElement>("ranking-lista");
         if (contenedor == null) return;
 
@@ -68,7 +68,8 @@ public class SceneResultadosManager : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < ranking.entradas.Count; i++)
+        int total = Mathf.Min(5, ranking.entradas.Count);
+        for (int i = 0; i < total; i++)
         {
             var entrada = ranking.entradas[i];
             var fila = new VisualElement();

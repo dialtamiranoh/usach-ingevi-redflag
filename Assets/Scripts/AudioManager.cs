@@ -15,6 +15,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip sfxObjetoRecogido;
     public AudioClip sfxPenalizacion;
     public AudioClip sfxSoborno;
+    public float volumenSFX = 0.1f;
 
     private AudioSource sourceMusica;
     private AudioSource sourceSFX;
@@ -42,6 +43,7 @@ public class AudioManager : MonoBehaviour
         sourceSFX = gameObject.AddComponent<AudioSource>();
         sourceSFX.loop = false;
         sourceSFX.spatialBlend = 0f;
+        sourceSFX.volume = volumenSFX;
     }
 
     void Start()
