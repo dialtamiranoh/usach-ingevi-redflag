@@ -51,6 +51,14 @@ public class UIManager : MonoBehaviour
     private Label hintCliente;
     private bool mouseEnUI = false;
 
+    // Feedback modal
+    private VisualElement panelFeedback;
+    private Label feedbackTitulo;
+    private Label feedbackDecision;
+    private Label feedbackNormativa;
+    private Label feedbackExplicacion;
+    private Button feedbackCerrar;
+
     // Botones de acción
     private Button btnAprobar, btnEscalar, btnRechazar;
 
@@ -106,6 +114,17 @@ public class UIManager : MonoBehaviour
         labelPuntaje  = root.Q<Label>("label-puntaje");
         labelEstado   = root.Q<Label>("label-estado");
 
+        panelFeedback = root.Q<VisualElement>("panel-feedback");
+        panelFeedback.RegisterCallback<MouseEnterEvent>(e => mouseEnUI = true);
+        panelFeedback.RegisterCallback<MouseLeaveEvent>(e => mouseEnUI = false);
+
+        feedbackTitulo = root.Q<Label>("feedback-titulo");
+        feedbackDecision = root.Q<Label>("feedback-decision");
+        feedbackNormativa = root.Q<Label>("feedback-normativa");
+        feedbackExplicacion = root.Q<Label>("feedback-explicacion");
+        feedbackCerrar = root.Q<Button>("feedback-cerrar");
+        feedbackCerrar.clicked += CerrarFeedback;
+
         flashPantalla       = root.Q<VisualElement>("flash-pantalla");
         selloContainer      = root.Q<VisualElement>("sello-container");
         selloTexto          = root.Q<Label>("sello-texto");
@@ -150,10 +169,14 @@ public class UIManager : MonoBehaviour
 
     void ConfigurarDialogo()
     {
-        pregunta1.clicked += () => ResponderPregunta("Mi actividad es el comercio de productos importados al por mayor.");
-        pregunta2.clicked += () => ResponderPregunta("Los fondos provienen de mi negocio de importación registrado en Chile.");
-        pregunta3.clicked += () => ResponderPregunta("No, no tengo ninguna vinculación con cargos políticos.");
-        pregunta4.clicked += () => ResponderPregunta("No tengo cuentas en el extranjero.");
+        pregunta1.clicked += () => ResponderPregunta("actividad",
+            caseManager?.ObtenerRespuesta("actividad") ?? "");
+        pregunta2.clicked += () => ResponderPregunta("origen_fondos",
+            caseManager?.ObtenerRespuesta("origen_fondos") ?? "");
+        pregunta3.clicked += () => ResponderPregunta("esPEP",
+            caseManager?.ObtenerRespuesta("esPEP") ?? "");
+        pregunta4.clicked += () => ResponderPregunta("cuentasExtranjero",
+            caseManager?.ObtenerRespuesta("cuentasExtranjero") ?? "");
         dialogoCerrar.clicked += CerrarDialogo;
     }
 
@@ -185,9 +208,42 @@ public class UIManager : MonoBehaviour
         dialogoAbierto = true;
     }
 
-    void ResponderPregunta(string respuesta)
+    void ResponderPregunta(string campo, string respuesta)
     {
         dialogoRespuesta.text = $"💬 {respuesta}";
+
+        // Verificar si esta respuesta activa una señal de alerta
+        var caso = caseManager?.CasoActual;
+        if (caso?.señalesInteraccion != null &&
+            caso.señalesInteraccion.Contains(campo))
+        {
+            // Destacar el campo con alerta
+            var root = uiDocument.rootVisualElement;
+            root.Q<VisualElement>($"field-{campo}")?.AddToClassList("field-alerta");
+
+            // Agregar al panel de discrepancias
+            AgregarDiscrepanciaInteraccion(caso, campo);
+        }
+    }
+
+    void AgregarDiscrepanciaInteraccion(CasoData caso, string campo)
+    {
+        var root = uiDocument.rootVisualElement;
+        var contenedor = root.Q<VisualElement>("discrepancias-container");
+        if (contenedor == null) return;
+
+        string mensaje = campo switch
+        {
+            "actividad" => "⚠ Actividad declarada no concuerda con perfil",
+            "origen_fondos" => "⚠ Origen de fondos inconsistente",
+            "esPEP" => "⚠ Cliente confirma ser PEP — EDD obligatorio",
+            "cuentasExtranjero" => "⚠ Cuenta en extranjero no declarada previamente",
+            _ => $"⚠ Alerta detectada: {campo}"
+        };
+
+        var label = new Label(mensaje);
+        label.AddToClassList("discrepancia-item");
+        contenedor.Add(label);
     }
 
     void CerrarDialogo()
@@ -246,27 +302,70 @@ public class UIManager : MonoBehaviour
     {
         if (!juegoActivo) return;
 
-        if (decision == "APROBADO")
+        bool correcto = caseManager?.ValidarDecision(decision) ?? false;
+        CasoData caso = caseManager?.CasoActual;
+
+        // Puntaje
+        if (correcto)
         {
-            puntaje += 10;
+            int puntos = decision switch
+            {
+                "APROBADO" => 200,
+                "RECHAZADO" => 200,
+                "ESCALADO" => 150,
+                _ => 100
+            };
+            AgregarPuntaje(puntos);
             AudioManager.Instance?.SFXAprobar();
         }
-        else if (decision == "RECHAZADO")
+        else
         {
-            puntaje += 15;
+            int penalizacion = decision switch
+            {
+                "APROBADO" when caso?.decisionCorrecta == "RECHAZADO" => -300,
+                "APROBADO" when caso?.decisionCorrecta == "ESCALADO" => -150,
+                "RECHAZADO" when caso?.decisionCorrecta == "APROBAR" => -100,
+                _ => -100
+            };
+            AgregarPuntaje(penalizacion);
             AudioManager.Instance?.SFXRechazar();
         }
-        else if (decision == "ESCALADO")
-        {
-            puntaje += 5;
-            AudioManager.Instance?.SFXEscalar();
-        }
 
+        // Feedback visual
         MostrarFeedbackDecision(decision);
 
-        labelEstado.text = $"Caso resuelto: {decision}";
-        ActualizarUI();
-        Invoke(nameof(SiguienteTurno), 0.5f);
+        // Mostrar panel modal
+        MostrarPanelFeedback(correcto, decision, caso);
+    }
+
+    void MostrarPanelFeedback(bool correcto, string decision, CasoData caso)
+    {
+        if (caso == null) return;
+
+        if (correcto)
+        {
+            feedbackTitulo.text = "DECISION CORRECTA";
+            feedbackTitulo.style.color = new UnityEngine.Color(0.2f, 0.8f, 0.4f);
+            feedbackDecision.text = $"Decidiste: {decision}";
+        }
+        else
+        {
+            feedbackTitulo.text = "DECISION INCORRECTA";
+            feedbackTitulo.style.color = new UnityEngine.Color(0.9f, 0.3f, 0.3f);
+            feedbackDecision.text = $"Decidiste: {decision}  |  Correcto: {caso.decisionCorrecta}";
+        }
+
+        feedbackNormativa.text = caso.normativaAplicable;
+        feedbackExplicacion.text = caso.explicacion;
+
+        panelFeedback.RemoveFromClassList("hidden");
+    }
+
+    void CerrarFeedback()
+    {
+        panelFeedback.AddToClassList("hidden");
+        mouseEnUI = false; // resetear explícitamente
+        Invoke(nameof(SiguienteTurno), 0.1f);
     }
 
     void SiguienteTurno()
@@ -321,18 +420,19 @@ public class UIManager : MonoBehaviour
         clienteRut.text = caso.cliente.rut;
         clienteNacionalidad.text = caso.cliente.nacionalidad;
         clienteActividad.text = caso.cliente.actividad;
-        clientePep.text = caso.cliente.esPEP ? "Sí — PEP confirmado" : "No declarado";
+        clientePep.text = caso.cliente.esPEP ? "⚠ PEP CONFIRMADO — EDD obligatorio" : "No declarado";
 
-        // Actualizar preguntas con respuestas reales del caso
         pregunta1.text = "¿Cuál es su actividad económica?";
         pregunta2.text = "¿Cuál es el origen de sus fondos?";
         pregunta3.text = "¿Es usted PEP o familiar de PEP?";
         pregunta4.text = "¿Tiene cuentas en el extranjero?";
 
-        // Resetear notas y estado
         notasAnalista.value = "";
         labelEstado.text = "Pendiente de resolución";
         CerrarDialogo();
+
+        // Señales automáticas y checkboxes
+        MostrarSeñalesAutomaticas(caso);
     }
 
     public void MostrarBotonReporte(ObjetoSospechoso obj)
@@ -463,5 +563,87 @@ public class UIManager : MonoBehaviour
             yield return null;
         }
         flashPantalla.AddToClassList("hidden");
+    }
+
+
+    void MostrarSeñalesAutomaticas(CasoData caso)
+    {
+        var root = uiDocument.rootVisualElement;
+
+        // Resetear estilos de campos
+        root.Q<VisualElement>("field-pep")?.RemoveFromClassList("field-alerta");
+        root.Q<VisualElement>("field-actividad")?.RemoveFromClassList("field-alerta");
+        root.Q<VisualElement>("field-nombre")?.RemoveFromClassList("field-alerta");
+
+        // PEP automático
+        if (caso.cliente.esPEP)
+        {
+            root.Q<VisualElement>("field-pep")?.AddToClassList("field-alerta");
+            clientePep.text = "⚠ PEP CONFIRMADO — EDD obligatorio";
+        }
+
+        // Discrepancias automáticas en documentos
+        if (caso.señalesAutomaticas != null)
+        {
+            foreach (string señal in caso.señalesAutomaticas)
+            {
+                switch (señal)
+                {
+                    case "fotoCoincide":
+                        root.Q<VisualElement>("field-nombre")?.AddToClassList("field-alerta");
+                        break;
+                    case "domicilioVerificado":
+                        // marca en checklist — se hace en los toggles
+                        break;
+                    case "actividadConcuerda":
+                        root.Q<VisualElement>("field-actividad")?.AddToClassList("field-alerta");
+                        break;
+                }
+            }
+        }
+
+        // Mostrar señales en panel de discrepancias
+        var contenedor = root.Q<VisualElement>("discrepancias-container");
+        if (contenedor != null)
+        {
+            contenedor.Clear();
+            if (caso.señalesAlerta != null && caso.señalesAlerta.Count > 0)
+            {
+                foreach (string alerta in caso.señalesAlerta)
+                {
+                    var label = new Label($"⚠ {alerta}");
+                    label.AddToClassList("discrepancia-item");
+                    contenedor.Add(label);
+                }
+            }
+            else
+            {
+                var label = new Label("Sin discrepancias detectadas");
+                label.AddToClassList("discrepancia-hint");
+                contenedor.Add(label);
+            }
+        }
+
+        // Marcar checkboxes según documentos
+        ActualizarCheckboxes(caso);
+    }
+
+    void ActualizarCheckboxes(CasoData caso)
+    {
+        var root = uiDocument.rootVisualElement;
+        root.Q<Toggle>("check-ci")?.SetValueWithoutNotify(caso.documentos.cedulaVigente);
+        root.Q<Toggle>("check-foto")?.SetValueWithoutNotify(caso.documentos.fotoCoincide);
+        root.Q<Toggle>("check-rut")?.SetValueWithoutNotify(caso.documentos.rutValido);
+        root.Q<Toggle>("check-domicilio")?.SetValueWithoutNotify(caso.documentos.domicilioVerificado);
+        root.Q<Toggle>("check-actividad")?.SetValueWithoutNotify(caso.documentos.actividadConcuerda);
+    }
+
+
+
+    public void AgregarPuntaje(int puntos)
+    {
+        puntaje += puntos;
+        if (puntaje < 0) puntaje = 0;
+        ActualizarUI();
     }
 }

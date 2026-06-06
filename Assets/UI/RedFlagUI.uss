@@ -121,6 +121,20 @@
     flex-shrink: 0;
 }
 
+.field-alerta {
+    background-color: rgba(220, 50, 50, 0.15);
+    border-left-width: 3px;
+    border-left-color: rgb(220, 50, 50);
+    border-radius: 0;
+}
+
+.discrepancia-item {
+    color: rgb(220, 80, 50);
+    font-size: 12px;
+    padding: 4px 8px;
+    margin-bottom: 4px;
+}
+
 /* ===================== CENTRO TRANSPARENTE ===================== */
 .panel-centro {
     flex-grow: 1;
