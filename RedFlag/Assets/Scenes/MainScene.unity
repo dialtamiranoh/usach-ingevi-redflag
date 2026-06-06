@@ -6207,7 +6207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   musicaAmbiente: {fileID: 8300000, guid: 46f577e5fa6ae2340aabc20254eac320, type: 3}
-  volumenMusica: 0.05
+  volumenMusica: 0.02
   sfxAprobar: {fileID: 8300000, guid: 753d4dc06f835844db5cd5648eb8986b, type: 3}
   sfxEscalar: {fileID: 8300000, guid: 9e995d4a0a50e264d8dfc280e78492c2, type: 3}
   sfxRechazar: {fileID: 8300000, guid: 3df2580dcd6511242bc02e70cbbf0e4a, type: 3}
