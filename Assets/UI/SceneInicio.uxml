@@ -1,0 +1,45 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+	<ui:VisualElement name="root" style="width:100%; height:100%; 
+        align-items:center; justify-content:center; 
+        background-color:rgba(10,15,25,1);">
+
+		<ui:Label text="RED FLAG" name="titulo"
+            style="font-size:64px; color:rgb(220,50,50); 
+            -unity-font-style:bold; margin-bottom:8px;"/>
+
+		<ui:Label text="Simulación de Cumplimiento Bancario"
+            name="subtitulo"
+            style="font-size:18px; color:rgba(255,255,255,0.6); 
+            margin-bottom:48px;"/>
+
+		<ui:VisualElement name="panel-login"
+            style="align-items:center; gap:16px; width:320px;">
+
+			<ui:TextField name="input-nombre"
+                placeholder-text="Ingresa tu nombre"
+                style="width:100%; height:44px; font-size:16px;"/>
+
+			<ui:Label name="label-error" text=""
+                class="hidden"
+                style="color:rgb(220,80,80); font-size:13px;"/>
+
+			<ui:Button name="btn-jugar" text="INICIAR JORNADA"
+                style="width:100%; height:48px; font-size:16px;
+                background-color:rgb(220,50,50); 
+                color:white; border-radius:8px;
+                border-width:0;"/>
+
+			<ui:Button name="btn-salir" text="SALIR"
+                style="width:100%; height:48px; font-size:16px;
+                background-color:rgba(255,255,255,0.1);
+                color:rgba(255,255,255,0.6); border-radius:8px;
+                border-width:0; margin-top:8px;"/>
+		
+		</ui:VisualElement>
+
+		<ui:Label name="label-record"
+            style="margin-top:32px; font-size:13px; 
+            color:rgba(255,255,255,0.4);"/>
+
+	</ui:VisualElement>
+</ui:UXML>
