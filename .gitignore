@@ -1,28 +1,36 @@
-# ===========================
 # Unity - Carpetas generadas
-# ===========================
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
-/[Mm]emory[Cc]aptures/
-/[Ee]rror[Rr]eporter/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emory[Cc]aptures/
+[Ee]rror[Rr]eporter/
 
-# Paquetes de terceros ignorados
-RedFlag/Assets/Gabies_Assets/
-RedFlag/Assets/HorrorPuzzleItems/
-RedFlag/Assets/JustPlay/
-RedFlag/Assets/PinkTea/
-RedFlag/Assets/Presents/
-RedFlag/Assets/Akduman/
-RedFlag/Assets/Universal UI, Game & Notification Sound Effects/
+# Paquetes de terceros
+Assets/Gabies_Assets/
+Assets/HorrorPuzzleItems/
+Assets/JustPlay/
+Assets/PinkTea/
+Assets/Presents/
+Assets/Akduman/
+Assets/Universal UI, Game & Notification Sound Effects/
 
-# ===========================
+# Archivos generados por Unity
+ComputeCommandBuffer.cs
+IBaseCommandBuffer.cs
+IComputeCommandBuffer.cs
+IRasterCommandBuffer.cs
+IUnsafeCommandBuffer.cs
+RasterCommandBuffer.cs
+UnsafeCommandBuffer.cs
+UIElementsSchema/
+UpgradeLog.htm
+gitignore
+
 # Visual Studio
-# ===========================
 .vs/
 .idea/
 *.csproj
@@ -40,35 +48,12 @@ RedFlag/Assets/Universal UI, Game & Notification Sound Effects/
 *.opendb
 *.VC.db
 
-# ===========================
 # Unity meta files generados
-# ===========================
 *.pidb.meta
 *.pdb.meta
 *.mdb.meta
 
-# ===========================
-# Crash reports
-# ===========================
-sysinfo.txt
-
-# ===========================
-# Builds y exports
-# ===========================
-*.apk
-*.aab
-*.unitypackage
-*.app
-*.bundle
-
-# ===========================
-# Crashlytics
-# ===========================
-crashlytics-build.properties
-
-# ===========================
 # OS
-# ===========================
 .DS_Store
 .DS_Store?
 ._*
