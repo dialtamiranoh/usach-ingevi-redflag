@@ -146,14 +146,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjetoSospechoso
   tipo: 2
-  tiempoRespawnMin: 15
-  tiempoRespawnMax: 45
+  categoria: 0
   tiempoLimite: 30
   sfxRecogido: {fileID: 0}
   sfxPenalizacion: {fileID: 0}
-  alertaVFX: {fileID: 0}
   estaArrastrado: 0
-  categoria: 0
 --- !u!54 &6501240422164036812
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -179,5 +176,5 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 90
   m_CollisionDetection: 0

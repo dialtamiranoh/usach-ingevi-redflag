@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 7752334117243840097}
   - component: {fileID: 1340604374958416875}
   - component: {fileID: 4935262054463451824}
+  - component: {fileID: 4775406750613672686}
   m_Layer: 0
   m_Name: llave
   m_TagString: Untagged
@@ -213,14 +214,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjetoSospechoso
   tipo: 3
-  tiempoRespawnMin: 15
-  tiempoRespawnMax: 45
+  categoria: 0
   tiempoLimite: 30
   sfxRecogido: {fileID: 0}
   sfxPenalizacion: {fileID: 0}
-  alertaVFX: {fileID: 0}
   estaArrastrado: 0
-  categoria: 0
 --- !u!54 &4935262054463451824
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -246,8 +244,30 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 90
   m_CollisionDetection: 0
+--- !u!64 &4775406750613672686
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5319819040862536014}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -827323528257501046, guid: 4def557500ba7364a9225f1167fc9bcf, type: 3}
 --- !u!1 &6729502295842350488
 GameObject:
   m_ObjectHideFlags: 0

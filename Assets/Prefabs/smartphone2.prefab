@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2251865936431468627}
   - component: {fileID: 7712640627602919106}
   - component: {fileID: 448979893216415241}
+  - component: {fileID: 8921045824386912108}
   m_Layer: 0
   m_Name: smartphone2
   m_TagString: Untagged
@@ -134,7 +135,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 90
   m_CollisionDetection: 0
 --- !u!114 &448979893216415241
 MonoBehaviour:
@@ -149,11 +150,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjetoSospechoso
   tipo: 1
-  tiempoRespawnMin: 15
-  tiempoRespawnMax: 45
+  categoria: 0
   tiempoLimite: 30
   sfxRecogido: {fileID: 0}
   sfxPenalizacion: {fileID: 0}
-  alertaVFX: {fileID: 0}
   estaArrastrado: 0
-  categoria: 0
+--- !u!64 &8921045824386912108
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2674702415307871025}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1329493899068053293, guid: 4a9bdd5240b8aa14cabb496374d50d4c, type: 3}

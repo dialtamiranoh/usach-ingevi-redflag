@@ -172,11 +172,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjetoSospechoso
   tipo: 5
-  tiempoRespawnMin: 15
-  tiempoRespawnMax: 45
+  categoria: 0
   tiempoLimite: 30
   sfxRecogido: {fileID: 0}
   sfxPenalizacion: {fileID: 0}
-  alertaVFX: {fileID: 0}
   estaArrastrado: 0
-  categoria: 0
