@@ -62,6 +62,14 @@ public class UIManager : MonoBehaviour
     // Botones de acción
     private Button btnAprobar, btnEscalar, btnRechazar;
 
+    // Logros
+    private Button btnLogros;
+    private VisualElement panelLogros;
+    private VisualElement grillaLogros;
+    private Button btnCerrarLogros;
+    private VisualElement toastLogro;
+    private Label toastLogroNombre;
+
     // Tabs
     private Button tabIdentidad, tabTransacciones, tabHistorial, tabSanciones;
 
@@ -96,7 +104,13 @@ public class UIManager : MonoBehaviour
         ConfigurarHUDFeedback();
         ActualizarUI();
         Invoke(nameof(IniciarVistaCliente), 0.1f);
+    }
 
+    void Start()
+    {
+        if (AchievementManager.Instance != null) {
+            AchievementManager.Instance.OnLogroDesbloqueado += MostrarToastLogro;
+        }
     }
 
     void IniciarVistaCliente()
@@ -185,6 +199,15 @@ public class UIManager : MonoBehaviour
         root.Q<VisualElement>("bottom-bar").RegisterCallback<MouseEnterEvent>(e => mouseEnUI = true);
         root.Q<VisualElement>("bottom-bar").RegisterCallback<MouseLeaveEvent>(e => mouseEnUI = false);
 
+        btnLogros = root.Q<Button>("btn-logros");
+        panelLogros = root.Q<VisualElement>("panel-logros");
+        grillaLogros = root.Q<VisualElement>("grilla-logros");
+        btnCerrarLogros = root.Q<Button>("btn-cerrar-logros");
+        toastLogro = root.Q<VisualElement>("toast-logro");
+        toastLogroNombre = root.Q<Label>("toast-logro-nombre");
+
+        if (btnLogros != null) btnLogros.clicked += AbrirPanelLogros;
+        if (btnCerrarLogros != null) btnCerrarLogros.clicked += CerrarPanelLogros;
     }
 
     void ConfigurarDialogo()
@@ -781,5 +804,89 @@ public class UIManager : MonoBehaviour
         if (puntaje <= 0 && turnoActual > 1 && puntos < 0) {
             TerminarJornada(false, "Demasiados errores de compliance");
         }
+    }
+
+    // ===================== LOGROS =====================
+    void AbrirPanelLogros()
+    {
+        if (panelLogros == null || grillaLogros == null) return;
+        panelLogros.RemoveFromClassList("hidden");
+        mouseEnUI = true;
+        ActualizarGrillaLogros();
+    }
+
+    void CerrarPanelLogros()
+    {
+        if (panelLogros != null) panelLogros.AddToClassList("hidden");
+        mouseEnUI = false;
+    }
+
+    void ActualizarGrillaLogros()
+    {
+        grillaLogros.Clear();
+
+        foreach (ObjetoSospechoso.TipoObjeto tipo in System.Enum.GetValues(typeof(ObjetoSospechoso.TipoObjeto)))
+        {
+            var itemContainer = new VisualElement();
+            itemContainer.AddToClassList("item-logro");
+
+            bool desbloqueado = AchievementManager.Instance != null && AchievementManager.Instance.TieneLogro(tipo);
+
+            if (desbloqueado)
+            {
+                itemContainer.AddToClassList("logro-desbloqueado");
+            }
+            else
+            {
+                itemContainer.AddToClassList("logro-bloqueado");
+            }
+
+            var icono = new Label(ObtenerIconoPorTipo(tipo));
+            icono.AddToClassList("logro-icono");
+
+            var texto = new Label(desbloqueado ? tipo.ToString() : "???");
+            texto.AddToClassList("logro-texto");
+
+            itemContainer.Add(icono);
+            itemContainer.Add(texto);
+            grillaLogros.Add(itemContainer);
+        }
+    }
+
+    string ObtenerIconoPorTipo(ObjetoSospechoso.TipoObjeto tipo)
+    {
+        return tipo switch
+        {
+            ObjetoSospechoso.TipoObjeto.Pendrive => "💾",
+            ObjetoSospechoso.TipoObjeto.Celular => "📱",
+            ObjetoSospechoso.TipoObjeto.PostIt => "📝",
+            ObjetoSospechoso.TipoObjeto.Llaves => "🔑",
+            ObjetoSospechoso.TipoObjeto.Credencial => "🪪",
+            ObjetoSospechoso.TipoObjeto.Carpeta => "📁",
+            ObjetoSospechoso.TipoObjeto.Documento => "📄",
+            ObjetoSospechoso.TipoObjeto.Tarjeta => "💳",
+            ObjetoSospechoso.TipoObjeto.SobreEfectivo => "✉",
+            ObjetoSospechoso.TipoObjeto.CajaRegalo => "🎁",
+            _ => "❓"
+        };
+    }
+
+    void MostrarToastLogro(ObjetoSospechoso.TipoObjeto tipo)
+    {
+        if (toastLogro == null || toastLogroNombre == null) return;
+        
+        toastLogroNombre.text = $"{ObtenerIconoPorTipo(tipo)} {tipo.ToString()}";
+        toastLogro.RemoveFromClassList("hidden");
+        
+        // Ocultar después de 3 segundos
+        StartCoroutine(RemoverClaseDespues(toastLogro, "hidden", 3f));
+        // Pero RemoverClaseDespues remueve. Necesito una para añadir.
+        StartCoroutine(OcultarToastLogro(3f));
+    }
+
+    System.Collections.IEnumerator OcultarToastLogro(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (toastLogro != null) toastLogro.AddToClassList("hidden");
     }
 }

@@ -611,3 +611,87 @@
     transition-property: opacity;
     transition-duration: 0.5s;
 }
+
+/* ===================== LOGROS ===================== */
+.btn-logros {
+    background-color: rgb(40, 30, 80);
+    border-color: rgb(120, 80, 200);
+    color: rgb(200, 150, 255);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 4px 10px;
+    -unity-font-style: bold;
+    cursor: link;
+    margin-right: 10px;
+}
+
+.btn-logros:hover {
+    background-color: rgb(60, 40, 110);
+    color: white;
+}
+
+.grilla-logros {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+}
+
+.item-logro {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    background-color: rgb(25, 30, 40);
+    border-radius: 8px;
+    border-width: 2px;
+    align-items: center;
+    justify-content: center;
+    transition-property: border-color, scale;
+    transition-duration: 0.2s;
+}
+
+.logro-icono {
+    font-size: 36px;
+    margin-bottom: 5px;
+}
+
+.logro-texto {
+    font-size: 10px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    color: white;
+}
+
+.logro-bloqueado {
+    border-color: rgb(40, 50, 60);
+    opacity: 0.4;
+    -unity-background-image-tint-color: gray;
+}
+
+.logro-desbloqueado {
+    border-color: rgb(255, 210, 80);
+    opacity: 1;
+    scale: 1.05;
+}
+
+/* Toast */
+.toast-logro {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(20, 25, 40, 0.95);
+    border-left-width: 4px;
+    border-left-color: gold;
+    padding: 15px;
+    border-radius: 6px;
+    transition-property: bottom, opacity;
+    transition-duration: 0.5s;
+    opacity: 1;
+}
+
+.toast-logro.hidden {
+    bottom: -100px;
+    opacity: 0;
+    display: flex; /* Override display:none from .hidden so we can animate */
+}
+

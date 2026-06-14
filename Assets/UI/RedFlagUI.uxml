@@ -15,6 +15,7 @@
             </ui:VisualElement>
             <ui:Label name="label-titulo" text="RED FLAG" class="top-title"/>
             <ui:VisualElement class="top-right">
+                <ui:Button name="btn-logros" text="🏆 LOGROS" class="btn-logros"/>
                 <ui:VisualElement name="multiplicador-container" class="multiplicador-container hidden">
                     <ui:Label name="label-multiplicador" text="×1" class="label-multiplicador"/>
                     <ui:Label name="label-racha" text="RACHA: 0" class="label-racha"/>
@@ -177,6 +178,24 @@
                     <ui:Button name="btn-menu" text="◄ MENÚ PRINCIPAL" class="btn btn-menu"/>
                 </ui:VisualElement>
             </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Panel de Logros -->
+        <ui:VisualElement name="panel-logros" class="panel-resultado hidden">
+            <ui:VisualElement class="resultado-modal" style="width: 600px; max-height: 80%;">
+                <ui:Label text="🏆 TUS LOGROS" class="resultado-titulo"/>
+                <ui:VisualElement class="divider"/>
+                <ui:ScrollView class="logros-scroll" style="flex-grow: 1; margin: 10px 0;">
+                    <ui:VisualElement name="grilla-logros" class="grilla-logros"/>
+                </ui:ScrollView>
+                <ui:Button name="btn-cerrar-logros" text="✕ CERRAR" class="btn" style="background-color: #dc3232; color: white; border-width: 0; padding: 10px;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Toast / Notificación de Logro -->
+        <ui:VisualElement name="toast-logro" class="toast-logro hidden">
+            <ui:Label text="🏆 Logro Desbloqueado!" style="-unity-font-style: bold; color: gold;"/>
+            <ui:Label name="toast-logro-nombre" text="Nombre del logro" style="color: white;"/>
         </ui:VisualElement>
 
     </ui:VisualElement>

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -141,6 +141,7 @@ public class ObjetoSospechoso : MonoBehaviour
             audioSource.PlayOneShot(sfxRecogido);
 
         manager?.OnObjetoGuardado(this);
+        AchievementManager.Instance?.DesbloquearLogro(tipo);
         StartCoroutine(FadeYDestruir());
     }
 
@@ -184,6 +185,7 @@ public class ObjetoSospechoso : MonoBehaviour
         Debug.Log("[LOG] Soborno ignorado correctamente +100");
 
         manager?.OnObjetoIgnorado(this);
+        AchievementManager.Instance?.DesbloquearLogro(tipo);
         StartCoroutine(FadeYRespawn());
     }
 
@@ -211,6 +213,18 @@ public class ObjetoSospechoso : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
 
         gameObject.SetActive(true);
+        
+        // Restaurar Alpha
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers) {
+            foreach (Material m in r.materials) {
+                if (m.HasProperty("_Color")) {
+                    Color c = m.color;
+                    m.color = new Color(c.r, c.g, c.b, 1f);
+                }
+            }
+        }
+
         Vector3 escalaFinal = transform.localScale;
         transform.localScale = Vector3.zero;
 
