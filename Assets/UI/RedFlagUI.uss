@@ -458,3 +458,156 @@
 .btn-rechazar:hover {
     background-color: rgb(110, 30, 30);
 }
+
+/* ===================== LAB 4 FEEDBACK VISUAL REACTIVO ===================== */
+.puntaje-subio {
+    color: rgb(0, 255, 100);
+    scale: 1.2;
+    transition-property: color, scale;
+    transition-duration: 0.2s;
+}
+
+.puntaje-bajo {
+    color: rgb(255, 50, 50);
+    translate: 5px 0;
+    transition-property: color, translate;
+    transition-duration: 0.1s;
+}
+
+.tiempo-urgente {
+    color: rgb(255, 50, 50);
+    -unity-font-style: bold;
+    scale: 1.1;
+    transition-property: color, scale;
+    transition-duration: 0.2s;
+}
+
+/* Multiplicador */
+.multiplicador-container {
+    flex-direction: row;
+    align-items: center;
+    margin-right: 15px;
+    background-color: rgba(255, 200, 50, 0.1);
+    border-radius: 4px;
+    padding: 2px 8px;
+    border-color: rgb(255, 200, 50);
+    border-width: 1px;
+    transition-property: scale;
+    transition-duration: 0.2s;
+}
+
+.multiplicador-activo {
+    scale: 1.15;
+    background-color: rgba(255, 200, 50, 0.3);
+}
+
+.label-multiplicador {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: rgb(255, 210, 80);
+    margin-right: 5px;
+}
+
+.label-racha {
+    font-size: 10px;
+    color: rgb(200, 180, 100);
+}
+
+/* Progreso Jornada */
+.progreso-container {
+    height: 4px;
+    width: 200px;
+    background-color: rgb(30, 40, 50);
+    border-radius: 2px;
+    margin-left: 15px;
+    overflow: hidden;
+}
+
+.progreso-fill {
+    height: 100%;
+    width: 0%;
+    background-color: rgb(0, 210, 160);
+    transition-property: width;
+    transition-duration: 0.5s;
+}
+
+/* Panel Resultado Jornada */
+.panel-resultado {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+.resultado-modal {
+    width: 400px;
+    background-color: rgb(20, 25, 35);
+    border-radius: 12px;
+    padding: 30px;
+    align-items: center;
+    border-top-width: 4px;
+    border-top-color: rgb(0, 210, 160);
+}
+
+.resultado-titulo {
+    font-size: 24px;
+    -unity-font-style: bold;
+    margin-bottom: 10px;
+}
+
+.resultado-mensaje {
+    font-size: 14px;
+    color: rgb(180, 195, 210);
+    margin-bottom: 15px;
+    -unity-text-align: upper-center;
+    white-space: normal;
+}
+
+.resultado-puntaje {
+    font-size: 32px;
+    color: rgb(255, 210, 80);
+    -unity-font-style: bold;
+    margin-top: 10px;
+}
+
+.resultado-racha {
+    font-size: 12px;
+    color: rgb(150, 160, 180);
+    margin-bottom: 20px;
+}
+
+.resultado-botones {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.btn-reintentar {
+    background-color: rgb(40, 60, 100);
+    border-width: 0;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    flex-grow: 1;
+    margin-right: 5px;
+}
+
+.btn-menu {
+    background-color: rgb(40, 40, 50);
+    border-width: 0;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    flex-grow: 1;
+    margin-left: 5px;
+}
+
+.fade-in {
+    opacity: 1;
+    transition-property: opacity;
+    transition-duration: 0.5s;
+}

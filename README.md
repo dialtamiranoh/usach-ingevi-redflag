@@ -167,13 +167,20 @@ git push -u origin nombre-de-rama
 
 ---
 
-## Próximos pasos
+## Novedades LAB 4 — Jugabilidad y Diseño de Niveles
 
-- [ ] Panel de documentos fijado en pantalla del monitor (World Space Canvas / Render Texture)
-- [ ] Feedback de decisión con normativa aplicable
-- [ ] Sistema de scoring real con penalizaciones
-- [ ] Ampliar banco de casos JSON
-- [ ] Pantalla de inicio y fin de jornada
+- **Jornada de Trabajo (Nivel)**: El jugador ahora enfrenta una jornada de 5 turnos (casos) con límite de tiempo de 60 segundos por caso.
+- **Curva de Dificultad**: Los casos aumentan su complejidad progresivamente (10 casos en total), con mayor frecuencia de objetos sospechosos y sobornos hacia el final del nivel.
+- **Sistema de Puntuación (Observer)**: Implementación de un sistema de multiplicador por racha conectado al HUD mediante el patrón arquitectónico Observer (`event Action`).
+- **HUD Reactivo**: La interfaz visual responde dinámicamente:
+  - Multiplicador activo (Glow + Scale)
+  - Animaciones verde/rojo al ganar o perder puntos
+  - Timer parpadeante cuando quedan menos de 15 segundos
+  - Barra de progreso de la jornada
+- **Condiciones de Victoria/Derrota**:
+  - *Victoria*: Finalizar la jornada con puntaje superior a 500 puntos.
+  - *Derrota*: Perder todo el puntaje (0 pts) o quedarse sin tiempo durante un caso.
+- **Narrativa Inmersiva**: Pantalla de introducción (Tutorial) con contexto narrativo sobre el rol del analista y la importancia del departamento de cumplimiento.
 
 ---
 

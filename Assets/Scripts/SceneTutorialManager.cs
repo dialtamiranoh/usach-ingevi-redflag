@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 public class SceneTutorialManager : MonoBehaviour
@@ -8,19 +8,19 @@ public class SceneTutorialManager : MonoBehaviour
     private int pasoActual = 0;
 
     private readonly string[] titulos = {
-        "Bienvenido a Red Flag",
-        "Tu escritorio",
+        "Departamento de Cumplimiento — Banco Central del Sur",
+        "Tu primer día como analista",
         "Analiza cada caso",
-        "Objetos sospechosos",
-        "Toma tu decisión"
+        "Cuidado con los sobornos",
+        "Tu jornada comienza ahora"
     };
 
     private readonly string[] descripciones = {
-        "Eres un analista de cumplimiento bancario. Tu trabajo es revisar clientes, detectar irregularidades y proteger la integridad del sistema financiero.",
-        "Tienes tres vistas:\n\n• ESC → Vista cliente\n• Q → Monitor KYC/AML\n• E → Notepad con el expediente",
-        "Cada caso presenta un cliente con historial, transacciones y antecedentes. Revisa los datos y decide: APROBAR, ESCALAR o RECHAZAR.",
-        "Durante la jornada pueden aparecer objetos sospechosos en tu escritorio — pendrives, celulares, documentos. Arrástralos al cajón antes de que desaparezcan.",
-        "Tienes 5 minutos por jornada. Cada decisión correcta suma puntos. Los errores penalizan. ¿Estás listo?"
+        "Santiago, Chile — Lunes 7:45 AM\n\nEl Departamento de Cumplimiento del Banco Central del Sur ha detectado un aumento del 40% en operaciones sospechosas este trimestre. La UAF exige resultados. Tu predecesor fue despedido por aprobar un caso de lavado de activos.",
+        "Tu escritorio tiene todo lo que necesitas:\n\n• ESC → Vista del cliente\n• Q → Monitor con documentos KYC/AML\n• E → Notepad con el expediente\n\nCada cliente espera tu decisión.",
+        "Revisa documentos, interroga al cliente, detecta discrepancias. Cada decisión correcta suma puntos. Las rachas multiplican tu puntaje.\n\n¡Pero cuidado! Un error grave puede costarte la jornada.",
+        "Durante la jornada pueden aparecer objetos sospechosos en tu escritorio — pendrives, celulares, sobres con efectivo. Arrastra los peligrosos al cajón. Los sobornos: NO LOS TOQUES.",
+        "Tienes 5 casos que resolver en esta jornada. La dificultad aumenta progresivamente.\n\nMantén tu puntaje sobre 0 y demuestra que eres digno del cargo.\n\n¿Estás listo, analista?"
     };
 
     private Label labelTitulo;

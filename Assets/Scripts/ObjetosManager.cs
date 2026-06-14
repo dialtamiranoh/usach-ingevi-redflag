@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,23 +30,27 @@ public class ObjetosManager : MonoBehaviour
         scoreManager = FindObjectOfType<ScoreManager>();
     }
 
+    private int turnoActual = 1;
+
     void Start()
     {
+        var uiManager = FindObjectOfType<UIManager>();
+        if (uiManager != null) {
+            uiManager.OnTurnoChanged += (turnoAct, turnoTot) => {
+                turnoActual = turnoAct;
+            };
+        }
         StartCoroutine(CicloSpawnSeguridad());
         StartCoroutine(CicloSpawnSoborno());
     }
 
     // ── Ciclo objetos seguridad ─────────────────────────────────
-    // T=0  → espera 20 seg
-    // T=20 → spawn objeto
-    // T=40 → objeto desaparece (manejado por ObjetoSospechoso)
-    // T=40 → espera 20 seg → repite
-
     IEnumerator CicloSpawnSeguridad()
     {
         while (true)
         {
-            yield return new WaitForSeconds(20f);
+            float intervaloSpawn = Mathf.Max(10f, 25f - (turnoActual * 3f));
+            yield return new WaitForSeconds(intervaloSpawn);
 
             if (objetosActivos.Count < maxObjetosSimultaneos)
                 SpawnObjetoSeguridad();
@@ -92,8 +96,11 @@ public class ObjetosManager : MonoBehaviour
 
     IEnumerator CicloSpawnSoborno()
     {
-        yield return new WaitForSeconds(20f);
-        SpawnSoborno();
+        while (true) {
+            float intervaloSoborno = Mathf.Max(15f, 30f - (turnoActual * 2f));
+            yield return new WaitForSeconds(intervaloSoborno);
+            SpawnSoborno();
+        }
     }
 
     void SpawnSoborno()
