@@ -1,6 +1,13 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/RedFlagUI.uss?fileID=7433441132597879392&amp;guid=d6c897fc2923b4c4ea12923fb60f068e&amp;type=3#RedFlagUI"/>
     <ui:VisualElement name="root" class="root">
+		<!-- Flash de pantalla -->
+		<ui:VisualElement name="flash-pantalla" class="hidden" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; opacity: 0;" />
+
+		<!-- Sello de decisión -->
+		<ui:VisualElement name="sello-container" class="hidden" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; align-items: center; justify-content: center;">
+			<ui:Label name="sello-texto" text="APROBADO" style="font-size: 72px; -unity-font-style: bold; rotate: -15deg; border-width: 4px; padding: 10px 20px;" />
+		</ui:VisualElement>
         <ui:VisualElement name="top-bar" class="top-bar">
             <ui:Label name="label-turno" text="TURNO 1 / 10" class="top-label left-label"/>
             <ui:Label name="label-titulo" text="RED FLAG" class="top-title"/>
@@ -107,6 +114,39 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
+
+		<!-- Panel feedback decisión -->
+		<ui:VisualElement name="panel-feedback" class="hidden"
+			style="position:absolute; left:0; top:0; right:0; bottom:0;
+    align-items:center; justify-content:center;
+    background-color:rgba(0,0,0,0.75);">
+
+			<ui:VisualElement name="feedback-modal" style="width:480px; padding:40px;
+        background-color:rgb(20,25,35); border-radius:12px; align-items:center; gap:16px;">
+
+				<ui:Label name="feedback-titulo" text="DECISIÓN CORRECTA"
+					style="font-size:22px; -unity-font-style:bold;"/>
+
+				<ui:Label name="feedback-decision" text=""
+					style="font-size:16px; color:rgba(255,255,255,0.7);"/>
+
+				<ui:VisualElement style="width:100%; height:1px; 
+            background-color:rgba(255,255,255,0.1); margin:8px 0;"/>
+
+				<ui:Label name="feedback-normativa" text=""
+					style="font-size:13px; color:rgba(255,255,255,0.5);
+            -unity-font-style:italic;"/>
+
+				<ui:Label name="feedback-explicacion" text=""
+					style="font-size:14px; color:rgba(255,255,255,0.8);
+            white-space:normal; -unity-text-align:upper-center;"/>
+
+				<ui:Button name="feedback-cerrar" text="CONTINUAR"
+					style="width:200px; height:44px; font-size:14px; margin-top:16px;
+            background-color:rgb(220,50,50); color:white;
+            border-width:0; border-radius:8px;"/>
+			</ui:VisualElement>
+		</ui:VisualElement>
         <ui:VisualElement name="bottom-bar" class="bottom-bar">
             <ui:Label name="label-normativa" text="Circular UAF N°62 — Ley 19.913" class="normativa-label"/>
             <ui:VisualElement class="action-buttons">

@@ -25,6 +25,13 @@
         "cuentasExtranjero": "No tengo cuentas en el extranjero."
       },
       "discrepancias": ["domicilioVerificado"],
+      "señalesAlerta": [
+        "Domicilio no verificado — información incompleta"
+      ],
+      "señalesAutomaticas": ["domicilioVerificado"],
+      "señalesInteraccion": [],
+      "nivelRiesgo": "medio",
+      "requiereROS": false,
       "decisionCorrecta": "ESCALAR",
       "normativaAplicable": "Circular UAF N°62 — Art. 8",
       "explicacion": "El domicilio no pudo ser verificado. Según la normativa vigente, casos con información incompleta deben escalarse al oficial de cumplimiento."
@@ -54,6 +61,14 @@
         "cuentasExtranjero": "No manejamos cuentas en el extranjero."
       },
       "discrepancias": ["actividadConcuerda"],
+      "señalesAlerta": [
+        "Actividad declarada incompatible con perfil transaccional",
+        "Patrón de fraccionamiento detectado (smurfing)"
+      ],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": ["actividad", "origen_fondos"],
+      "nivelRiesgo": "alto",
+      "requiereROS": true,
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62",
       "explicacion": "La empresa declara consultoría pero sus transacciones muestran movimientos de efectivo en múltiples depósitos bajo USD 10.000 (smurfing). Actividad incompatible con el perfil. Debe rechazarse y generarse un ROS."
@@ -83,6 +98,13 @@
         "cuentasExtranjero": "No tengo cuentas en el extranjero."
       },
       "discrepancias": [],
+      "señalesAlerta": [
+        "Cliente es PEP — requiere Enhanced Due Diligence obligatorio"
+      ],
+      "señalesAutomaticas": ["esPEP"],
+      "señalesInteraccion": ["esPEP"],
+      "nivelRiesgo": "alto",
+      "requiereROS": false,
       "decisionCorrecta": "ESCALAR",
       "normativaAplicable": "Circular UAF N°62 — PEP Screening",
       "explicacion": "La clienta es PEP (Persona Expuesta Políticamente). Aunque sus documentos están en orden, la normativa exige Enhanced Due Diligence (EDD) obligatorio para PEPs, lo que requiere aprobación del oficial de cumplimiento."
@@ -112,6 +134,11 @@
         "cuentasExtranjero": "No tengo cuentas en el extranjero."
       },
       "discrepancias": [],
+      "señalesAlerta": [],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": [],
+      "nivelRiesgo": "bajo",
+      "requiereROS": false,
       "decisionCorrecta": "APROBAR",
       "normativaAplicable": "Ley 19.913 — Debida Diligencia Estándar",
       "explicacion": "El cliente cumple todos los requisitos de debida diligencia estándar. Documentos vigentes, actividad coherente con ingresos, no es PEP y no presenta señales de alerta. Puede aprobarse el onboarding."
@@ -141,6 +168,14 @@
         "cuentasExtranjero": "Tengo una cuenta operativa en China para pagar proveedores."
       },
       "discrepancias": ["fotoCoincide"],
+      "señalesAlerta": [
+        "Foto no coincide con documento — posible suplantación",
+        "Cuenta en el extranjero no declarada previamente"
+      ],
+      "señalesAutomaticas": ["fotoCoincide"],
+      "señalesInteraccion": ["cuentasExtranjero"],
+      "nivelRiesgo": "alto",
+      "requiereROS": true,
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62 — Sanctions Screening",
       "explicacion": "La foto del documento no coincide con la persona presente, lo que constituye una posible suplantación de identidad. Adicionalmente declara cuenta en el extranjero no informada previamente. Debe rechazarse y generarse un reporte de operación sospechosa (ROS)."
