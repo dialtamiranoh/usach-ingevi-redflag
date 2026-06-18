@@ -23,6 +23,7 @@ public class ObjetosManager : MonoBehaviour
     public int maxObjetosSimultaneos = 2;
 
     private List<ObjetoSospechoso> objetosActivos = new();
+    private List<ObjetoSospechoso> sobornosActivos = new();
     private ScoreManager scoreManager;
 
     void Awake()
@@ -76,7 +77,7 @@ public class ObjetosManager : MonoBehaviour
         //Vector3 pos = new Vector3(punto.position.x, alturaEscritorio, punto.position.z);
         Vector3 pos = punto.position;
 
-        GameObject obj = Instantiate(prefabElegido, pos, Quaternion.identity);
+        GameObject obj = Instantiate(prefabElegido, pos, prefabElegido.transform.rotation);
         ObjetoSospechoso comp = obj.GetComponent<ObjetoSospechoso>();
         if (comp != null)
         {
@@ -111,11 +112,11 @@ public class ObjetosManager : MonoBehaviour
         //Vector3 pos = new Vector3(punto.position.x, alturaEscritorio, punto.position.z);
         Vector3 pos = punto.position;
 
-        GameObject obj = Instantiate(prefabElegido, pos, Quaternion.identity);
+        GameObject obj = Instantiate(prefabElegido, pos, prefabElegido.transform.rotation);
         ObjetoSospechoso comp = obj.GetComponent<ObjetoSospechoso>();
         if (comp != null)
         {
-            objetosActivos.Add(comp);
+            sobornosActivos.Add(comp);
             Debug.Log($"[SPAWN] Soborno: {prefabElegido.name}");
         }
     }
@@ -125,11 +126,13 @@ public class ObjetosManager : MonoBehaviour
     public void OnObjetoGuardado(ObjetoSospechoso obj)
     {
         objetosActivos.Remove(obj);
+        sobornosActivos.Remove(obj);
     }
 
     public void OnObjetoIgnorado(ObjetoSospechoso obj)
     {
         objetosActivos.Remove(obj);
+        sobornosActivos.Remove(obj);
     }
 
     public void ProgramarRespawn(ObjetoSospechoso obj, float tiempo)

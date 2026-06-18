@@ -211,6 +211,7 @@ public class ObjetoSospechoso : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
 
         gameObject.SetActive(true);
+        RestaurarOpacidad();
         Vector3 escalaFinal = transform.localScale;
         transform.localScale = Vector3.zero;
 
@@ -234,6 +235,17 @@ public class ObjetoSospechoso : MonoBehaviour
             yield return null;
         }
         transform.localScale = escalaFinal;
+    }
+
+    void RestaurarOpacidad()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+            foreach (Material m in r.materials)
+            {
+                Color c = m.color;
+                m.color = new Color(c.r, c.g, c.b, 1f);
+            }
     }
 
     IEnumerator FadeOut()
