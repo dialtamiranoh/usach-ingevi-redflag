@@ -172,7 +172,7 @@ public class ObjetoSospechoso : MonoBehaviour
         Debug.Log("[LOG] Soborno aceptado — penalización -300");
 
         manager?.OnObjetoIgnorado(this);
-        StartCoroutine(FadeYRespawn());
+        StartCoroutine(FadeYDestruir());
     }
 
     void SobornoIgnorado()
@@ -184,43 +184,7 @@ public class ObjetoSospechoso : MonoBehaviour
         Debug.Log("[LOG] Soborno ignorado correctamente +100");
 
         manager?.OnObjetoIgnorado(this);
-        StartCoroutine(FadeYRespawn());
-    }
-
-    // ── Respawn (solo sobornos) ───────────────────────────────────
-
-    IEnumerator FadeYRespawn()
-    {
-        yield return StartCoroutine(FadeOut());
-        gameObject.SetActive(false);
-        Debug.Log($"[LOG] Soborno programando respawn 20 seg");
-        manager?.ProgramarRespawn(this, 20f);
-    }
-
-    public void Respawn()
-    {
-        if (manager == null) manager = FindObjectOfType<ObjetosManager>();
-        if (uiManager == null) uiManager = FindObjectOfType<UIManager>();
-
-        fueGuardado = false;
-        penalizado = false;
-        timerIgnorado = 0f;
-
-        rb.isKinematic = false;
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-
-        gameObject.SetActive(true);
-        RestaurarOpacidad();
-        Vector3 escalaFinal = transform.localScale;
-        transform.localScale = Vector3.zero;
-
-        if (brillo != null)
-        {
-            brillo.enabled = true;
-            brillo.ReiniciarBrillo();
-        }
-        StartCoroutine(AnimarSpawn(escalaFinal));
+        StartCoroutine(FadeYDestruir());
     }
 
     // ── Coroutines ────────────────────────────────────────────────

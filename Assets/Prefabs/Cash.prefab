@@ -150,8 +150,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjetoSospechoso
   tipo: 8
-  categoria: 0
-  tiempoLimite: 30
+  categoria: 1
+  tiempoLimite: 20
   sfxRecogido: {fileID: 0}
   sfxPenalizacion: {fileID: 0}
   estaArrastrado: 0

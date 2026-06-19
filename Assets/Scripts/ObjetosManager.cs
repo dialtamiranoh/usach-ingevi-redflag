@@ -93,8 +93,11 @@ public class ObjetosManager : MonoBehaviour
 
     IEnumerator CicloSpawnSoborno()
     {
-        yield return new WaitForSeconds(20f);
-        SpawnSoborno();
+        while (true)
+        {
+            yield return new WaitForSeconds(20f);
+            SpawnSoborno();
+        }
     }
 
     void SpawnSoborno()
@@ -116,6 +119,8 @@ public class ObjetosManager : MonoBehaviour
         ObjetoSospechoso comp = obj.GetComponent<ObjetoSospechoso>();
         if (comp != null)
         {
+            comp.categoria = ObjetoSospechoso.CategoriaObjeto.Soborno;
+            comp.tiempoLimite = 20f;
             sobornosActivos.Add(comp);
             Debug.Log($"[SPAWN] Soborno: {prefabElegido.name}");
         }
@@ -134,18 +139,6 @@ public class ObjetosManager : MonoBehaviour
         objetosActivos.Remove(obj);
         sobornosActivos.Remove(obj);
     }
-
-    public void ProgramarRespawn(ObjetoSospechoso obj, float tiempo)
-    {
-        StartCoroutine(RespawnCoroutine(obj, tiempo));
-    }
-
-    IEnumerator RespawnCoroutine(ObjetoSospechoso obj, float tiempo)
-    {
-        yield return new WaitForSeconds(tiempo);
-        if (obj != null) obj.Respawn();
-    }
-
 
     private int ultimoPuntoUsado = -1;
 
