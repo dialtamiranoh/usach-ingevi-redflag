@@ -9,9 +9,17 @@
 			<ui:Label name="sello-texto" text="APROBADO" style="font-size: 72px; -unity-font-style: bold; rotate: -15deg; border-width: 4px; padding: 10px 20px;" />
 		</ui:VisualElement>
         <ui:VisualElement name="top-bar" class="top-bar">
-            <ui:Label name="label-turno" text="TURNO 1 / 10" class="top-label left-label"/>
+            <ui:Label name="label-turno" text="TURNO 1 / 5" class="top-label left-label"/>
+            <ui:VisualElement name="progreso-container" class="progreso-container">
+                <ui:VisualElement name="progreso-fill" class="progreso-fill"/>
+            </ui:VisualElement>
             <ui:Label name="label-titulo" text="RED FLAG" class="top-title"/>
             <ui:VisualElement class="top-right">
+                <ui:Button name="btn-logros" text="🏆 LOGROS" class="btn-logros"/>
+                <ui:VisualElement name="multiplicador-container" class="multiplicador-container hidden">
+                    <ui:Label name="label-multiplicador" text="×1" class="label-multiplicador"/>
+                    <ui:Label name="label-racha" text="RACHA: 0" class="label-racha"/>
+                </ui:VisualElement>
                 <ui:Label name="label-tiempo" text="⏱ 05:00" class="top-label"/>
                 <ui:Label name="label-puntaje" text="★ 0 pts" class="top-label"/>
             </ui:VisualElement>
@@ -156,5 +164,39 @@
             </ui:VisualElement>
             <ui:Label name="label-estado" text="Pendiente de resolución" class="estado-label"/>
         </ui:VisualElement>
+
+        <!-- Panel de resultado de jornada (victoria/derrota) -->
+        <ui:VisualElement name="panel-resultado-jornada" class="panel-resultado hidden">
+            <ui:VisualElement class="resultado-modal">
+                <ui:Label name="resultado-titulo" text="JORNADA EXITOSA" class="resultado-titulo"/>
+                <ui:Label name="resultado-mensaje" text="" class="resultado-mensaje"/>
+                <ui:VisualElement class="divider"/>
+                <ui:Label name="resultado-puntaje" text="0 pts" class="resultado-puntaje"/>
+                <ui:Label name="resultado-racha-max" text="Racha máxima: 0" class="resultado-racha"/>
+                <ui:VisualElement class="resultado-botones">
+                    <ui:Button name="btn-reintentar" text="↻ REINTENTAR" class="btn btn-reintentar"/>
+                    <ui:Button name="btn-menu" text="◄ MENÚ PRINCIPAL" class="btn btn-menu"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Panel de Logros -->
+        <ui:VisualElement name="panel-logros" class="panel-resultado hidden">
+            <ui:VisualElement class="resultado-modal" style="width: 600px; max-height: 80%;">
+                <ui:Label text="🏆 TUS LOGROS" class="resultado-titulo"/>
+                <ui:VisualElement class="divider"/>
+                <ui:ScrollView class="logros-scroll" style="flex-grow: 1; margin: 10px 0;">
+                    <ui:VisualElement name="grilla-logros" class="grilla-logros"/>
+                </ui:ScrollView>
+                <ui:Button name="btn-cerrar-logros" text="✕ CERRAR" class="btn" style="background-color: #dc3232; color: white; border-width: 0; padding: 10px;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Toast / Notificación de Logro -->
+        <ui:VisualElement name="toast-logro" class="toast-logro hidden">
+            <ui:Label text="🏆 Logro Desbloqueado!" style="-unity-font-style: bold; color: gold;"/>
+            <ui:Label name="toast-logro-nombre" text="Nombre del logro" style="color: white;"/>
+        </ui:VisualElement>
+
     </ui:VisualElement>
 </ui:UXML>

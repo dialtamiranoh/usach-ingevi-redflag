@@ -24,11 +24,15 @@
         "esPEP": "No, no tengo ninguna vinculación con cargos políticos.",
         "cuentasExtranjero": "No tengo cuentas en el extranjero."
       },
-      "discrepancias": ["domicilioVerificado"],
+      "discrepancias": [
+        "domicilioVerificado"
+      ],
       "señalesAlerta": [
         "Domicilio no verificado — información incompleta"
       ],
-      "señalesAutomaticas": ["domicilioVerificado"],
+      "señalesAutomaticas": [
+        "domicilioVerificado"
+      ],
       "señalesInteraccion": [],
       "nivelRiesgo": "medio",
       "requiereROS": false,
@@ -60,13 +64,18 @@
         "esPEP": "No aplica, somos una empresa.",
         "cuentasExtranjero": "No manejamos cuentas en el extranjero."
       },
-      "discrepancias": ["actividadConcuerda"],
+      "discrepancias": [
+        "actividadConcuerda"
+      ],
       "señalesAlerta": [
         "Actividad declarada incompatible con perfil transaccional",
         "Patrón de fraccionamiento detectado (smurfing)"
       ],
       "señalesAutomaticas": [],
-      "señalesInteraccion": ["actividad", "origen_fondos"],
+      "señalesInteraccion": [
+        "actividad",
+        "origen_fondos"
+      ],
       "nivelRiesgo": "alto",
       "requiereROS": true,
       "decisionCorrecta": "RECHAZAR",
@@ -101,8 +110,12 @@
       "señalesAlerta": [
         "Cliente es PEP — requiere Enhanced Due Diligence obligatorio"
       ],
-      "señalesAutomaticas": ["esPEP"],
-      "señalesInteraccion": ["esPEP"],
+      "señalesAutomaticas": [
+        "esPEP"
+      ],
+      "señalesInteraccion": [
+        "esPEP"
+      ],
       "nivelRiesgo": "alto",
       "requiereROS": false,
       "decisionCorrecta": "ESCALAR",
@@ -167,18 +180,222 @@
         "esPEP": "No, no tengo ninguna vinculación política.",
         "cuentasExtranjero": "Tengo una cuenta operativa en China para pagar proveedores."
       },
-      "discrepancias": ["fotoCoincide"],
+      "discrepancias": [
+        "fotoCoincide"
+      ],
       "señalesAlerta": [
         "Foto no coincide con documento — posible suplantación",
         "Cuenta en el extranjero no declarada previamente"
       ],
-      "señalesAutomaticas": ["fotoCoincide"],
-      "señalesInteraccion": ["cuentasExtranjero"],
+      "señalesAutomaticas": [
+        "fotoCoincide"
+      ],
+      "señalesInteraccion": [
+        "cuentasExtranjero"
+      ],
       "nivelRiesgo": "alto",
       "requiereROS": true,
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62 — Sanctions Screening",
       "explicacion": "La foto del documento no coincide con la persona presente, lo que constituye una posible suplantación de identidad. Adicionalmente declara cuenta en el extranjero no informada previamente. Debe rechazarse y generarse un reporte de operación sospechosa (ROS)."
+    },
+    {
+      "id": "#00147",
+      "tipo": "KYC",
+      "prioridad": "MEDIA",
+      "cliente": {
+        "nombre": "Luis Soto",
+        "rut": "14.555.666-8",
+        "nacionalidad": "Chilena",
+        "actividad": "Empleado",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": false,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Soy empleado.",
+        "origen_fondos": "Sueldo.",
+        "esPEP": "No.",
+        "cuentasExtranjero": "No."
+      },
+      "discrepancias": [
+        "domicilioVerificado"
+      ],
+      "señalesAlerta": [
+        "Domicilio no verificado"
+      ],
+      "señalesAutomaticas": [
+        "domicilioVerificado"
+      ],
+      "señalesInteraccion": [],
+      "nivelRiesgo": "medio",
+      "requiereROS": false,
+      "decisionCorrecta": "ESCALAR",
+      "normativaAplicable": "Circular UAF N°62",
+      "explicacion": "Falta domicilio."
+    },
+    {
+      "id": "#00148",
+      "tipo": "AML",
+      "prioridad": "ALTA",
+      "cliente": {
+        "nombre": "Inversiones XYZ",
+        "rut": "77.888.999-0",
+        "nacionalidad": "Chilena",
+        "actividad": "Inversiones",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": false
+      },
+      "respuestasCliente": {
+        "actividad": "Inversiones",
+        "origen_fondos": "Extranjero",
+        "esPEP": "No",
+        "cuentasExtranjero": "Si"
+      },
+      "discrepancias": [
+        "actividadConcuerda"
+      ],
+      "señalesAlerta": [
+        "Transferencias sin justificación"
+      ],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": [
+        "cuentasExtranjero"
+      ],
+      "nivelRiesgo": "alto",
+      "requiereROS": true,
+      "decisionCorrecta": "RECHAZAR",
+      "normativaAplicable": "Ley 19.913",
+      "explicacion": "Riesgo ALD."
+    },
+    {
+      "id": "#00149",
+      "tipo": "Compliance",
+      "prioridad": "BAJA",
+      "cliente": {
+        "nombre": "Rosa Díaz",
+        "rut": "11.222.333-4",
+        "nacionalidad": "Chilena",
+        "actividad": "Jubilada",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Jubilada",
+        "origen_fondos": "Pensión",
+        "esPEP": "No",
+        "cuentasExtranjero": "No"
+      },
+      "discrepancias": [],
+      "señalesAlerta": [],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": [],
+      "nivelRiesgo": "bajo",
+      "requiereROS": false,
+      "decisionCorrecta": "APROBAR",
+      "normativaAplicable": "Ley 19.913",
+      "explicacion": "Sin riesgo."
+    },
+    {
+      "id": "#00150",
+      "tipo": "AML",
+      "prioridad": "ALTA",
+      "cliente": {
+        "nombre": "Pedro Vargas",
+        "rut": "16.777.888-9",
+        "nacionalidad": "Extranjera",
+        "actividad": "Exportador",
+        "esPEP": true
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": false,
+        "rutValido": true,
+        "domicilioVerificado": false,
+        "actividadConcuerda": false
+      },
+      "respuestasCliente": {
+        "actividad": "Exportador",
+        "origen_fondos": "Ventas",
+        "esPEP": "Si",
+        "cuentasExtranjero": "Si"
+      },
+      "discrepancias": [
+        "fotoCoincide",
+        "domicilioVerificado",
+        "actividadConcuerda"
+      ],
+      "señalesAlerta": [
+        "Múltiples alertas, PEP extranjero"
+      ],
+      "señalesAutomaticas": [
+        "fotoCoincide",
+        "esPEP"
+      ],
+      "señalesInteraccion": [
+        "esPEP",
+        "cuentasExtranjero"
+      ],
+      "nivelRiesgo": "alto",
+      "requiereROS": true,
+      "decisionCorrecta": "RECHAZAR",
+      "normativaAplicable": "Ley 19.913",
+      "explicacion": "Demasiado riesgo y discrepancias."
+    },
+    {
+      "id": "#00151",
+      "tipo": "KYC",
+      "prioridad": "ALTA",
+      "cliente": {
+        "nombre": "Marta Gómez",
+        "rut": "9.888.777-6",
+        "nacionalidad": "Chilena",
+        "actividad": "Contadora",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": false,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Contadora",
+        "origen_fondos": "Sueldo",
+        "esPEP": "No",
+        "cuentasExtranjero": "No"
+      },
+      "discrepancias": [
+        "cedulaVigente"
+      ],
+      "señalesAlerta": [
+        "Cédula vencida"
+      ],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": [],
+      "nivelRiesgo": "medio",
+      "requiereROS": false,
+      "decisionCorrecta": "ESCALAR",
+      "normativaAplicable": "Circular UAF N°62",
+      "explicacion": "Documentación inválida."
     }
   ]
 }

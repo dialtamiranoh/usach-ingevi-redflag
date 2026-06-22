@@ -62,16 +62,36 @@ public class UIManager : MonoBehaviour
     // Botones de acción
     private Button btnAprobar, btnEscalar, btnRechazar;
 
+    // Logros
+    private Button btnLogros;
+    private VisualElement panelLogros;
+    private VisualElement grillaLogros;
+    private Button btnCerrarLogros;
+    private VisualElement toastLogro;
+    private Label toastLogroNombre;
+
     // Tabs
     private Button tabIdentidad, tabTransacciones, tabHistorial, tabSanciones;
 
     // Estado
     private int turnoActual = 1;
-    private int turnoTotal = 10;
+    private int turnoTotal = 5;
     private int puntaje = 0;
-    private float tiempoRestante = 300f;
+    private float tiempoRestante = 60f;
     private bool juegoActivo = true;
     private bool dialogoAbierto = false;
+    
+    // Multiplicador y Racha
+    private int rachaCorrectas = 0;
+    private float multiplicador = 1.0f;
+    private int rachaMaxima = 0;
+
+    // Eventos para patrón Observer
+    public event System.Action<int, int> OnPuntajeChanged;     // (nuevoPuntaje, delta)
+    public event System.Action<int, int> OnTurnoChanged;       // (turnoActual, turnoTotal)
+    public event System.Action<float> OnTiempoChanged;         // tiempoRestante
+    public event System.Action<bool> OnJornadaTerminada;       // true=victoria, false=derrota
+    public event System.Action<int> OnMultiplicadorChanged;    // nuevoMultiplicador
 
     void Awake()
     {
@@ -81,9 +101,16 @@ public class UIManager : MonoBehaviour
         ConfigurarTabs();
         ConfigurarDialogo();
         ConfigurarFieldsClickables(root);
+        ConfigurarHUDFeedback();
         ActualizarUI();
         Invoke(nameof(IniciarVistaCliente), 0.1f);
+    }
 
+    void Start()
+    {
+        if (AchievementManager.Instance != null) {
+            AchievementManager.Instance.OnLogroDesbloqueado += MostrarToastLogro;
+        }
     }
 
     void IniciarVistaCliente()
@@ -95,7 +122,14 @@ public class UIManager : MonoBehaviour
     {
         if (!juegoActivo) return;
         tiempoRestante -= Time.deltaTime;
-        if (tiempoRestante <= 0) { tiempoRestante = 0; juegoActivo = false; }
+        
+        OnTiempoChanged?.Invoke(tiempoRestante);
+        
+        if (tiempoRestante <= 0) { 
+            tiempoRestante = 0; 
+            TerminarJornada(false, "Tiempo agotado — caso no resuelto");
+            return;
+        }
         ActualizarTiempo();
 
         // Detectar clic en cliente 3D
@@ -165,6 +199,15 @@ public class UIManager : MonoBehaviour
         root.Q<VisualElement>("bottom-bar").RegisterCallback<MouseEnterEvent>(e => mouseEnUI = true);
         root.Q<VisualElement>("bottom-bar").RegisterCallback<MouseLeaveEvent>(e => mouseEnUI = false);
 
+        btnLogros = root.Q<Button>("btn-logros");
+        panelLogros = root.Q<VisualElement>("panel-logros");
+        grillaLogros = root.Q<VisualElement>("grilla-logros");
+        btnCerrarLogros = root.Q<Button>("btn-cerrar-logros");
+        toastLogro = root.Q<VisualElement>("toast-logro");
+        toastLogroNombre = root.Q<Label>("toast-logro-nombre");
+
+        if (btnLogros != null) btnLogros.clicked += AbrirPanelLogros;
+        if (btnCerrarLogros != null) btnCerrarLogros.clicked += CerrarPanelLogros;
     }
 
     void ConfigurarDialogo()
@@ -305,9 +348,15 @@ public class UIManager : MonoBehaviour
         bool correcto = caseManager?.ValidarDecision(decision) ?? false;
         CasoData caso = caseManager?.CasoActual;
 
-        // Puntaje
+        // Puntaje y Multiplicador
         if (correcto)
         {
+            rachaCorrectas++;
+            if (rachaCorrectas > rachaMaxima) rachaMaxima = rachaCorrectas;
+            
+            multiplicador = 1.0f + (rachaCorrectas - 1) * 0.5f; // ×1, ×1.5, ×2, ×2.5...
+            multiplicador = Mathf.Min(multiplicador, 3.0f);       // Cap en ×3
+            
             int puntos = decision switch
             {
                 "APROBADO" => 200,
@@ -315,11 +364,19 @@ public class UIManager : MonoBehaviour
                 "ESCALADO" => 150,
                 _ => 100
             };
-            AgregarPuntaje(puntos);
+            
+            int puntosConMulti = Mathf.RoundToInt(puntos * multiplicador);
+            AgregarPuntaje(puntosConMulti);
+            OnMultiplicadorChanged?.Invoke(rachaCorrectas);
+            
             AudioManager.Instance?.SFXAprobar();
         }
         else
         {
+            rachaCorrectas = 0;
+            multiplicador = 1.0f;
+            OnMultiplicadorChanged?.Invoke(0);
+            
             int penalizacion = decision switch
             {
                 "APROBADO" when caso?.decisionCorrecta == "RECHAZADO" => -300,
@@ -372,14 +429,15 @@ public class UIManager : MonoBehaviour
     {
         if (turnoActual >= turnoTotal)
         {
-            juegoActivo = false;
-            labelEstado.text = "Jornada finalizada";
-            GameManager.Instance?.SetPuntajeFinal(puntaje);
-            Invoke(nameof(IrAResultados), 1.5f);
+            if (puntaje >= 500)
+                TerminarJornada(true, "Jornada exitosa");
+            else
+                TerminarJornada(false, "Puntaje insuficiente");
             return;
         }
         turnoActual++;
-        tiempoRestante = 300f;
+        OnTurnoChanged?.Invoke(turnoActual, turnoTotal);
+        tiempoRestante = 60f;
         CerrarDialogo();
         CambiarPersonaje();
         if (cameraController != null)
@@ -387,6 +445,40 @@ public class UIManager : MonoBehaviour
         labelEstado.text = "Pendiente de resolución";
         ActualizarUI();
         caseManager.SiguienteCaso();
+    }
+
+    void TerminarJornada(bool victoria, string mensaje)
+    {
+        juegoActivo = false;
+        
+        // Mostrar panel de resultado
+        var root = uiDocument.rootVisualElement;
+        var panelResultado = root.Q<VisualElement>("panel-resultado-jornada");
+        
+        if (panelResultado != null) {
+            // Configurar contenido
+            var titulo = panelResultado.Q<Label>("resultado-titulo");
+            titulo.text = victoria ? "✓ JORNADA EXITOSA" : "✗ JORNADA FALLIDA";
+            titulo.style.color = victoria 
+                ? new Color(0.2f, 0.9f, 0.4f) 
+                : new Color(0.9f, 0.3f, 0.3f);
+            
+            panelResultado.Q<Label>("resultado-mensaje").text = mensaje;
+            panelResultado.Q<Label>("resultado-puntaje").text = $"{puntaje} pts";
+            panelResultado.Q<Label>("resultado-racha-max").text = $"Racha máxima: {rachaMaxima}";
+            
+            // Botones
+            panelResultado.Q<Button>("btn-reintentar").clicked += () => GameManager.Instance?.Reiniciar();
+            panelResultado.Q<Button>("btn-menu").clicked += () => GameManager.Instance?.IrAInicio();
+            
+            // Mostrar
+            panelResultado.RemoveFromClassList("hidden");
+        }
+        
+        // Guardar puntaje
+        GameManager.Instance?.SetPuntajeFinal(puntaje);
+        
+        OnJornadaTerminada?.Invoke(victoria);
     }
 
     void IrAResultados()
@@ -640,10 +732,161 @@ public class UIManager : MonoBehaviour
 
 
 
+    void ConfigurarHUDFeedback() {
+        // Suscribirse a eventos propios (Observer)
+        OnPuntajeChanged += AnimarCambioPuntaje;
+        OnMultiplicadorChanged += AnimarMultiplicador;
+        OnTiempoChanged += AnimarTiempoUrgente;
+        OnTurnoChanged += ActualizarProgreso;
+    }
+
+    void ActualizarProgreso(int turnoAct, int turnoTot) {
+        var root = uiDocument.rootVisualElement;
+        var progresoFill = root.Q<VisualElement>("progreso-fill");
+        if (progresoFill != null) {
+            float porcentaje = (float)(turnoAct - 1) / turnoTot * 100f;
+            progresoFill.style.width = new StyleLength(Length.Percent(porcentaje));
+        }
+    }
+
+    void AnimarCambioPuntaje(int nuevoPuntaje, int delta) {
+        if (delta > 0) {
+            labelPuntaje.AddToClassList("puntaje-subio");
+            StartCoroutine(RemoverClaseDespues(labelPuntaje, "puntaje-subio", 0.5f));
+        } else if (delta < 0) {
+            labelPuntaje.AddToClassList("puntaje-bajo");
+            StartCoroutine(RemoverClaseDespues(labelPuntaje, "puntaje-bajo", 0.5f));
+        }
+    }
+
+    System.Collections.IEnumerator RemoverClaseDespues(VisualElement element, string className, float delay) {
+        yield return new WaitForSeconds(delay);
+        element.RemoveFromClassList(className);
+    }
+
+    void AnimarMultiplicador(int racha) {
+        var root = uiDocument.rootVisualElement;
+        var multiplicadorContainer = root.Q<VisualElement>("multiplicador-container");
+        var labelMulti = root.Q<Label>("label-multiplicador");
+        var labelR = root.Q<Label>("label-racha");
+
+        if (multiplicadorContainer == null) return;
+
+        if (racha >= 2) {
+            multiplicadorContainer.RemoveFromClassList("hidden");
+            labelMulti.text = $"×{multiplicador:F1}";
+            labelR.text = $"RACHA: {racha}";
+            multiplicadorContainer.AddToClassList("multiplicador-activo");
+            StartCoroutine(RemoverClaseDespues(multiplicadorContainer, "multiplicador-activo", 0.3f));
+        } else {
+            multiplicadorContainer.AddToClassList("hidden");
+        }
+    }
+
+    void AnimarTiempoUrgente(float tiempo) {
+        if (labelTiempo == null) return;
+        if (tiempo <= 15f && tiempo > 0)
+            labelTiempo.AddToClassList("tiempo-urgente");
+        else
+            labelTiempo.RemoveFromClassList("tiempo-urgente");
+    }
+
     public void AgregarPuntaje(int puntos)
     {
+        int anterior = puntaje;
         puntaje += puntos;
         if (puntaje < 0) puntaje = 0;
+        
+        OnPuntajeChanged?.Invoke(puntaje, puntos);
         ActualizarUI();
+        
+        // Condición de derrota por puntaje en turnos avanzados o si llegó a 0 con errores
+        if (puntaje <= 0 && turnoActual > 1 && puntos < 0) {
+            TerminarJornada(false, "Demasiados errores de compliance");
+        }
+    }
+
+    // ===================== LOGROS =====================
+    void AbrirPanelLogros()
+    {
+        if (panelLogros == null || grillaLogros == null) return;
+        panelLogros.RemoveFromClassList("hidden");
+        mouseEnUI = true;
+        ActualizarGrillaLogros();
+    }
+
+    void CerrarPanelLogros()
+    {
+        if (panelLogros != null) panelLogros.AddToClassList("hidden");
+        mouseEnUI = false;
+    }
+
+    void ActualizarGrillaLogros()
+    {
+        grillaLogros.Clear();
+
+        foreach (ObjetoSospechoso.TipoObjeto tipo in System.Enum.GetValues(typeof(ObjetoSospechoso.TipoObjeto)))
+        {
+            var itemContainer = new VisualElement();
+            itemContainer.AddToClassList("item-logro");
+
+            bool desbloqueado = AchievementManager.Instance != null && AchievementManager.Instance.TieneLogro(tipo);
+
+            if (desbloqueado)
+            {
+                itemContainer.AddToClassList("logro-desbloqueado");
+            }
+            else
+            {
+                itemContainer.AddToClassList("logro-bloqueado");
+            }
+
+            var icono = new Label(ObtenerIconoPorTipo(tipo));
+            icono.AddToClassList("logro-icono");
+
+            var texto = new Label(desbloqueado ? tipo.ToString() : "???");
+            texto.AddToClassList("logro-texto");
+
+            itemContainer.Add(icono);
+            itemContainer.Add(texto);
+            grillaLogros.Add(itemContainer);
+        }
+    }
+
+    string ObtenerIconoPorTipo(ObjetoSospechoso.TipoObjeto tipo)
+    {
+        return tipo switch
+        {
+            ObjetoSospechoso.TipoObjeto.Pendrive => "💾",
+            ObjetoSospechoso.TipoObjeto.Celular => "📱",
+            ObjetoSospechoso.TipoObjeto.PostIt => "📝",
+            ObjetoSospechoso.TipoObjeto.Llaves => "🔑",
+            ObjetoSospechoso.TipoObjeto.Credencial => "🪪",
+            ObjetoSospechoso.TipoObjeto.Carpeta => "📁",
+            ObjetoSospechoso.TipoObjeto.Documento => "📄",
+            ObjetoSospechoso.TipoObjeto.Tarjeta => "💳",
+            ObjetoSospechoso.TipoObjeto.SobreEfectivo => "✉",
+            ObjetoSospechoso.TipoObjeto.CajaRegalo => "🎁",
+            _ => "❓"
+        };
+    }
+
+    void MostrarToastLogro(ObjetoSospechoso.TipoObjeto tipo)
+    {
+        if (toastLogro == null || toastLogroNombre == null) return;
+        
+        toastLogroNombre.text = $"{ObtenerIconoPorTipo(tipo)} {tipo.ToString()}";
+        toastLogro.RemoveFromClassList("hidden");
+        
+        // Ocultar después de 3 segundos
+        StartCoroutine(RemoverClaseDespues(toastLogro, "hidden", 3f));
+        // Pero RemoverClaseDespues remueve. Necesito una para añadir.
+        StartCoroutine(OcultarToastLogro(3f));
+    }
+
+    System.Collections.IEnumerator OcultarToastLogro(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (toastLogro != null) toastLogro.AddToClassList("hidden");
     }
 }
