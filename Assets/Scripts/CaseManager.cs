@@ -42,6 +42,11 @@ public class CasoData
     public DocumentosData documentos;
     public RespuestasClienteData respuestasCliente;
     public List<string> discrepancias;
+    public List<string> señalesAlerta;
+    public List<string> señalesAutomaticas;
+    public List<string> señalesInteraccion;
+    public string nivelRiesgo;
+    public bool requiereROS;
     public string decisionCorrecta;
     public string normativaAplicable;
     public string explicacion;
@@ -110,8 +115,18 @@ public class CaseManager : MonoBehaviour
     public bool ValidarDecision(string decision)
     {
         if (CasoActual == null) return false;
-        bool correcto = decision == CasoActual.decisionCorrecta;
-        Debug.Log($"Decisión: {decision} | Correcta: {CasoActual.decisionCorrecta} | Resultado: {(correcto ? "✔ CORRECTO" : "✘ INCORRECTO")}");
+
+        // Normalizar — mapear decisiones del JSON a las del juego
+        string correcta = CasoActual.decisionCorrecta switch
+        {
+            "APROBAR" => "APROBADO",
+            "ESCALAR" => "ESCALADO",
+            "RECHAZAR" => "RECHAZADO",
+            _ => CasoActual.decisionCorrecta
+        };
+
+        bool correcto = decision == correcta;
+        Debug.Log($"Decisión: {decision} | Correcta: {correcta} | {(correcto ? "CORRECTO" : "INCORRECTO")}");
         return correcto;
     }
 
