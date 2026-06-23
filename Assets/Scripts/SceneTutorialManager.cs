@@ -80,9 +80,9 @@ public class SceneTutorialManager : MonoBehaviour
             var itemContainer = new VisualElement();
             itemContainer.style.width = 100;
             itemContainer.style.height = 100;
-            itemContainer.style.margin = new StyleLength(10);
+            itemContainer.style.marginTop = 10; itemContainer.style.marginBottom = 10; itemContainer.style.marginLeft = 10; itemContainer.style.marginRight = 10;
             itemContainer.style.backgroundColor = new Color(0.1f, 0.12f, 0.15f);
-            itemContainer.style.borderRadius = 8;
+            itemContainer.style.borderTopLeftRadius = 8; itemContainer.style.borderTopRightRadius = 8; itemContainer.style.borderBottomLeftRadius = 8; itemContainer.style.borderBottomRightRadius = 8;
             itemContainer.style.borderTopWidth = 2;
             itemContainer.style.borderRightWidth = 2;
             itemContainer.style.borderBottomWidth = 2;

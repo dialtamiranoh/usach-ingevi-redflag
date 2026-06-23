@@ -15,15 +15,18 @@ public class CameraController : MonoBehaviour
 {
     // ===================== PUNTOS DE CÁMARA =====================
 
-    [Header("Puntos de cámara")]
-    [Tooltip("Transform del punto de vista del cliente")]
-    public Transform puntoCliente;
-
-    [Tooltip("Transform del punto de vista del monitor")]
-    public Transform puntoMonitor;
-
-    [Tooltip("Transform del punto de vista del notepad")]
-    public Transform puntoNotepad;
+    [Header("Puntos de cámara por Rol")]
+    public Transform puntoClienteKYC;
+    public Transform puntoMonitorKYC;
+    public Transform puntoNotepadKYC;
+    [Space]
+    public Transform puntoClienteAML;
+    public Transform puntoMonitorAML;
+    public Transform puntoNotepadAML;
+    [Space]
+    public Transform puntoSupervisorCliente;
+    public Transform puntoSupervisorMonitor;
+    public Transform puntoSupervisorNotepad;
 
     // ===================== CONFIGURACIÓN =====================
 
@@ -35,6 +38,11 @@ public class CameraController : MonoBehaviour
 
     public enum VistaActiva { Cliente, Monitor, Notepad }
     private VistaActiva vistaActual = VistaActiva.Cliente;
+
+    // Puntos activos actuales (se asocian dinámicamente, públicos para conservar inspector)
+    [HideInInspector] public Transform puntoCliente;
+    [HideInInspector] public Transform puntoMonitor;
+    [HideInInspector] public Transform puntoNotepad;
 
     // Punto objetivo actual
     private Transform puntoObjetivo;
@@ -48,7 +56,49 @@ public class CameraController : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log($"Awake - puntoCliente: {puntoCliente?.name} pos: {puntoCliente?.position}");
+        // Inicializar respaldos si no se han asignado en inspector usando los valores anteriores
+        if (puntoClienteKYC == null) puntoClienteKYC = puntoCliente;
+        if (puntoMonitorKYC == null) puntoMonitorKYC = puntoMonitor;
+        if (puntoNotepadKYC == null) puntoNotepadKYC = puntoNotepad;
+
+        // Auto-descubrimiento para Analista 2 (AML) si están vacíos
+        if (puntoClienteAML == null)
+        {
+            GameObject go = GameObject.Find("CameraCliente2");
+            if (go != null) puntoClienteAML = go.transform;
+        }
+        if (puntoMonitorAML == null)
+        {
+            GameObject go = GameObject.Find("CameraMonitor2");
+            if (go != null) puntoMonitorAML = go.transform;
+        }
+        if (puntoNotepadAML == null)
+        {
+            GameObject go = GameObject.Find("CameraNotepad2");
+            if (go != null) puntoNotepadAML = go.transform;
+        }
+
+        // Auto-descubrimiento para Supervisor si están vacíos
+        if (puntoSupervisorCliente == null)
+        {
+            GameObject go = GameObject.Find("CameraCliente3");
+            if (go != null) puntoSupervisorCliente = go.transform;
+        }
+        if (puntoSupervisorMonitor == null)
+        {
+            GameObject go = GameObject.Find("CameraMonitor3");
+            if (go != null) puntoSupervisorMonitor = go.transform;
+        }
+        if (puntoSupervisorNotepad == null)
+        {
+            GameObject go = GameObject.Find("CameraNotepad3");
+            if (go != null) puntoSupervisorNotepad = go.transform;
+        }
+
+        // Por defecto, apuntar a KYC
+        puntoCliente = puntoClienteKYC;
+        puntoMonitor = puntoMonitorKYC;
+        puntoNotepad = puntoNotepadKYC;
 
         if (puntoCliente != null)
         {
@@ -56,8 +106,58 @@ public class CameraController : MonoBehaviour
             puntoObjetivo = puntoCliente;
             vistaActual = VistaActiva.Cliente;
         }
+    }
 
-        Debug.Log($"Awake - Camera pos después: {transform.position}");
+    void OnEnable()
+    {
+        RoleManager.OnRolCambiado += AlCambiarRol;
+        RoleManager.OnNivelCambiado += AlCambiarNivel;
+    }
+
+    void OnDisable()
+    {
+        RoleManager.OnRolCambiado -= AlCambiarRol;
+        RoleManager.OnNivelCambiado -= AlCambiarNivel;
+    }
+
+    private void AlCambiarNivel(RoleManager.NivelJuego nuevoNivel)
+    {
+        switch (nuevoNivel)
+        {
+            case RoleManager.NivelJuego.Nivel1:
+            case RoleManager.NivelJuego.Nivel2:
+                puntoCliente = puntoClienteKYC;
+                puntoMonitor = puntoMonitorKYC;
+                puntoNotepad = puntoNotepadKYC;
+                break;
+            case RoleManager.NivelJuego.Nivel3:
+                puntoCliente = puntoSupervisorCliente != null ? puntoSupervisorCliente : puntoClienteKYC;
+                puntoMonitor = puntoSupervisorMonitor != null ? puntoSupervisorMonitor : puntoMonitorKYC;
+                puntoNotepad = puntoSupervisorNotepad != null ? puntoSupervisorNotepad : puntoNotepadKYC;
+                break;
+        }
+        CambiarVista(VistaActiva.Cliente, true);
+    }
+
+    private void AlCambiarRol(RoleManager.RolAnalista nuevoRol)
+    {
+        if (RoleManager.Instance != null && RoleManager.Instance.nivelActual != RoleManager.NivelJuego.Nivel2) 
+            return;
+
+        switch (nuevoRol)
+        {
+            case RoleManager.RolAnalista.Analista_KYC:
+                puntoCliente = puntoClienteKYC;
+                puntoMonitor = puntoMonitorKYC;
+                puntoNotepad = puntoNotepadKYC;
+                break;
+            case RoleManager.RolAnalista.Analista_AML:
+                puntoCliente = puntoClienteAML != null ? puntoClienteAML : puntoClienteKYC;
+                puntoMonitor = puntoMonitorAML != null ? puntoMonitorAML : puntoMonitorKYC;
+                puntoNotepad = puntoNotepadAML != null ? puntoNotepadAML : puntoNotepadKYC;
+                break;
+        }
+        CambiarVista(VistaActiva.Cliente);
     }
 
     void Start()

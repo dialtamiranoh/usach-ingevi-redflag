@@ -33,6 +33,26 @@ public class ClienteData
 }
 
 [System.Serializable]
+public class TransaccionData
+{
+    public string fecha;
+    public string descripcion;
+    public int monto;
+    public string tipo; // "DEPOSITO_EFECTIVO", "TRANSFERENCIA_RECIBIDA", etc.
+    public string origen;
+    public string destino;
+}
+
+[System.Serializable]
+public class SocioData
+{
+    public string nombre;
+    public string rut;
+    public float porcentajeParticipacion;
+    public bool esPEP;
+}
+
+[System.Serializable]
 public class CasoData
 {
     public string id;
@@ -50,6 +70,11 @@ public class CasoData
     public string decisionCorrecta;
     public string normativaAplicable;
     public string explicacion;
+    
+    // Nuevos campos para Niveles 2 y 3
+    public List<TransaccionData> transacciones;
+    public List<SocioData> estructuraSocietaria;
+    public string notasJuniorEscalado;
 }
 
 [System.Serializable]

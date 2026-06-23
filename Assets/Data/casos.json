@@ -38,7 +38,43 @@
       "requiereROS": false,
       "decisionCorrecta": "ESCALAR",
       "normativaAplicable": "Circular UAF N°62 — Art. 8",
-      "explicacion": "El domicilio no pudo ser verificado. Según la normativa vigente, casos con información incompleta deben escalarse al oficial de cumplimiento."
+      "explicacion": "El domicilio no pudo ser verificado. Según la normativa vigente, casos con información incompleta deben escalarse al oficial de cumplimiento.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "ABONO SUELDO",
+          "monto": 1200000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "EMPRESA S.A.",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-03",
+          "descripcion": "COMPRA SUPERMERCADO",
+          "monto": -85000,
+          "tipo": "COMPRA_DEBITO",
+          "origen": "CLIENTE",
+          "destino": "LIDER"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "PAGO DE CUENTA",
+          "monto": -45000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "ENEL"
+        },
+        {
+          "fecha": "2026-06-10",
+          "descripcion": "RETIRO CAJERO",
+          "monto": -50000,
+          "tipo": "RETIRO_CAJERO",
+          "origen": "CLIENTE",
+          "destino": "CAJERO BANK"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron señales de KYC consistentes con El domicilio no pudo ser verificado. Según la norm..."
     },
     {
       "id": "#00143",
@@ -80,7 +116,56 @@
       "requiereROS": true,
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62",
-      "explicacion": "La empresa declara consultoría pero sus transacciones muestran movimientos de efectivo en múltiples depósitos bajo USD 10.000 (smurfing). Actividad incompatible con el perfil. Debe rechazarse y generarse un ROS."
+      "explicacion": "La empresa declara consultoría pero sus transacciones muestran movimientos de efectivo en múltiples depósitos bajo USD 10.000 (smurfing). Actividad incompatible con el perfil. Debe rechazarse y generarse un ROS.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4500000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-02",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4800000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-03",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4700000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "TRANSFERENCIA EXTERIOR",
+          "monto": -13500000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "SHELL CORP (CAYMAN ISLANDS)"
+        }
+      ],
+      "estructuraSocietaria": [
+        {
+          "nombre": "Esteban Muñoz",
+          "rut": "10.444.333-2",
+          "porcentajeParticipacion": 40.0,
+          "esPEP": false
+        },
+        {
+          "nombre": "Senador Oculto S.",
+          "rut": "7.111.222-3",
+          "porcentajeParticipacion": 60.0,
+          "esPEP": true
+        }
+      ],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron señales de AML consistentes con La empresa declara consultoría pero sus transaccio..."
     },
     {
       "id": "#00144",
@@ -120,7 +205,27 @@
       "requiereROS": false,
       "decisionCorrecta": "ESCALAR",
       "normativaAplicable": "Circular UAF N°62 — PEP Screening",
-      "explicacion": "La clienta es PEP (Persona Expuesta Políticamente). Aunque sus documentos están en orden, la normativa exige Enhanced Due Diligence (EDD) obligatorio para PEPs, lo que requiere aprobación del oficial de cumplimiento."
+      "explicacion": "La clienta es PEP (Persona Expuesta Políticamente). Aunque sus documentos están en orden, la normativa exige Enhanced Due Diligence (EDD) obligatorio para PEPs, lo que requiere aprobación del oficial de cumplimiento.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "TRANSFERENCIA TESORERIA GRAL",
+          "monto": 5500000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "TESORERIA GENERAL DE LA REPUBLICA",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "ABONO CONSULTORIA INDEP",
+          "monto": 15000000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "CONSTRUCTORA LIMITADA",
+          "destino": "CLIENTE"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron señales de KYC consistentes con La clienta es PEP (Persona Expuesta Políticamente)..."
     },
     {
       "id": "#00145",
@@ -154,7 +259,43 @@
       "requiereROS": false,
       "decisionCorrecta": "APROBAR",
       "normativaAplicable": "Ley 19.913 — Debida Diligencia Estándar",
-      "explicacion": "El cliente cumple todos los requisitos de debida diligencia estándar. Documentos vigentes, actividad coherente con ingresos, no es PEP y no presenta señales de alerta. Puede aprobarse el onboarding."
+      "explicacion": "El cliente cumple todos los requisitos de debida diligencia estándar. Documentos vigentes, actividad coherente con ingresos, no es PEP y no presenta señales de alerta. Puede aprobarse el onboarding.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "ABONO SUELDO",
+          "monto": 1200000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "EMPRESA S.A.",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-03",
+          "descripcion": "COMPRA SUPERMERCADO",
+          "monto": -85000,
+          "tipo": "COMPRA_DEBITO",
+          "origen": "CLIENTE",
+          "destino": "LIDER"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "PAGO DE CUENTA",
+          "monto": -45000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "ENEL"
+        },
+        {
+          "fecha": "2026-06-10",
+          "descripcion": "RETIRO CAJERO",
+          "monto": -50000,
+          "tipo": "RETIRO_CAJERO",
+          "origen": "CLIENTE",
+          "destino": "CAJERO BANK"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": ""
     },
     {
       "id": "#00146",
@@ -197,7 +338,43 @@
       "requiereROS": true,
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62 — Sanctions Screening",
-      "explicacion": "La foto del documento no coincide con la persona presente, lo que constituye una posible suplantación de identidad. Adicionalmente declara cuenta en el extranjero no informada previamente. Debe rechazarse y generarse un reporte de operación sospechosa (ROS)."
+      "explicacion": "La foto del documento no coincide con la persona presente, lo que constituye una posible suplantación de identidad. Adicionalmente declara cuenta en el extranjero no informada previamente. Debe rechazarse y generarse un reporte de operación sospechosa (ROS).",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4500000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-02",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4800000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-03",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4700000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "TRANSFERENCIA EXTERIOR",
+          "monto": -13500000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "SHELL CORP (CAYMAN ISLANDS)"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron señales de AML consistentes con La foto del documento no coincide con la persona p..."
     },
     {
       "id": "#00147",
@@ -237,7 +414,43 @@
       "requiereROS": false,
       "decisionCorrecta": "ESCALAR",
       "normativaAplicable": "Circular UAF N°62",
-      "explicacion": "Falta domicilio."
+      "explicacion": "Falta domicilio.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "ABONO SUELDO",
+          "monto": 1200000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "EMPRESA S.A.",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-03",
+          "descripcion": "COMPRA SUPERMERCADO",
+          "monto": -85000,
+          "tipo": "COMPRA_DEBITO",
+          "origen": "CLIENTE",
+          "destino": "LIDER"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "PAGO DE CUENTA",
+          "monto": -45000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "ENEL"
+        },
+        {
+          "fecha": "2026-06-10",
+          "descripcion": "RETIRO CAJERO",
+          "monto": -50000,
+          "tipo": "RETIRO_CAJERO",
+          "origen": "CLIENTE",
+          "destino": "CAJERO BANK"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron señales de KYC consistentes con Falta domicilio...."
     },
     {
       "id": "#00148",
@@ -277,7 +490,56 @@
       "requiereROS": true,
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913",
-      "explicacion": "Riesgo ALD."
+      "explicacion": "Riesgo ALD.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4500000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-02",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4800000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-03",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4700000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "TRANSFERENCIA EXTERIOR",
+          "monto": -13500000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "SHELL CORP (CAYMAN ISLANDS)"
+        }
+      ],
+      "estructuraSocietaria": [
+        {
+          "nombre": "Esteban Muñoz",
+          "rut": "10.444.333-2",
+          "porcentajeParticipacion": 40.0,
+          "esPEP": false
+        },
+        {
+          "nombre": "Senador Oculto S.",
+          "rut": "7.111.222-3",
+          "porcentajeParticipacion": 60.0,
+          "esPEP": true
+        }
+      ],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron señales de AML consistentes con Riesgo ALD...."
     },
     {
       "id": "#00149",
@@ -311,7 +573,43 @@
       "requiereROS": false,
       "decisionCorrecta": "APROBAR",
       "normativaAplicable": "Ley 19.913",
-      "explicacion": "Sin riesgo."
+      "explicacion": "Sin riesgo.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "ABONO SUELDO",
+          "monto": 1200000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "EMPRESA S.A.",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-03",
+          "descripcion": "COMPRA SUPERMERCADO",
+          "monto": -85000,
+          "tipo": "COMPRA_DEBITO",
+          "origen": "CLIENTE",
+          "destino": "LIDER"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "PAGO DE CUENTA",
+          "monto": -45000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "ENEL"
+        },
+        {
+          "fecha": "2026-06-10",
+          "descripcion": "RETIRO CAJERO",
+          "monto": -50000,
+          "tipo": "RETIRO_CAJERO",
+          "origen": "CLIENTE",
+          "destino": "CAJERO BANK"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": ""
     },
     {
       "id": "#00150",
@@ -357,7 +655,43 @@
       "requiereROS": true,
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913",
-      "explicacion": "Demasiado riesgo y discrepancias."
+      "explicacion": "Demasiado riesgo y discrepancias.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4500000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-02",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4800000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-03",
+          "descripcion": "DEPOSITO EFECTIVO CAJA",
+          "monto": 4700000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "TRANSFERENCIA EXTERIOR",
+          "monto": -13500000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "SHELL CORP (CAYMAN ISLANDS)"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron señales de AML consistentes con Demasiado riesgo y discrepancias...."
     },
     {
       "id": "#00151",
@@ -395,7 +729,43 @@
       "requiereROS": false,
       "decisionCorrecta": "ESCALAR",
       "normativaAplicable": "Circular UAF N°62",
-      "explicacion": "Documentación inválida."
+      "explicacion": "Documentación inválida.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "ABONO SUELDO",
+          "monto": 1200000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "EMPRESA S.A.",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-03",
+          "descripcion": "COMPRA SUPERMERCADO",
+          "monto": -85000,
+          "tipo": "COMPRA_DEBITO",
+          "origen": "CLIENTE",
+          "destino": "LIDER"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "PAGO DE CUENTA",
+          "monto": -45000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "ENEL"
+        },
+        {
+          "fecha": "2026-06-10",
+          "descripcion": "RETIRO CAJERO",
+          "monto": -50000,
+          "tipo": "RETIRO_CAJERO",
+          "origen": "CLIENTE",
+          "destino": "CAJERO BANK"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron señales de KYC consistentes con Documentación inválida...."
     }
   ]
 }

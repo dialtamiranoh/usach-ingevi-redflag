@@ -119,6 +119,61 @@
                             <ui:Label text="Selecciona los ítems inconsistentes para registrar discrepancias." class="discrepancia-hint"/>
                         </ui:VisualElement>
                     </ui:VisualElement>
+                    
+                    <!-- Sección Transacciones (AML) -->
+                    <ui:VisualElement name="content-transacciones" class="doc-section hidden">
+                        <ui:Label text="HISTORIAL TRANSACCIONAL (ÚLTIMOS 30 DÍAS)" class="section-subtitle"/>
+                        <ui:ScrollView name="transacciones-scroll" class="transacciones-list" style="flex-grow: 1; margin: 10px 0; max-height: 180px;">
+                            <!-- Se poblará dinámicamente desde el script -->
+                        </ui:ScrollView>
+                        <ui:Label text="Arrastra una transacción sospechosa como evidencia para el ROS." class="discrepancia-hint"/>
+                    </ui:VisualElement>
+
+                    <!-- Sección Historial (Bitácora de Auditoría para Supervisor) -->
+                    <ui:VisualElement name="content-historial" class="doc-section hidden">
+                        <ui:Label text="BITÁCORA DE AUDITORÍA JUNIOR" class="section-subtitle"/>
+                        <ui:Label name="label-bitacora-junior" text="No hay registros previos." class="bitacora-text" style="white-space: normal; color: #b4c3d2; font-size: 14px; margin-top: 10px;"/>
+                    </ui:VisualElement>
+
+                    <!-- Sección Sanciones (Estructura Societaria y UBO para Supervisor) -->
+                    <ui:VisualElement name="content-sanciones" class="doc-section hidden">
+                        <ui:Label text="ESTRUCTURA DE PROPIEDAD Y BENEFICIARIO FINAL (UBO)" class="section-subtitle"/>
+                        <ui:ScrollView name="sanciones-ubo-container" class="ubo-box" style="flex-grow: 1; margin-top: 10px; max-height: 180px;">
+                            <!-- Se poblará dinámicamente desde el script -->
+                        </ui:ScrollView>
+                        <ui:Label text="Búsqueda automatizada en registro civil y PEP nacionales activa." class="discrepancia-hint"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Panel ROS (Formulario UAF para Supervisor) -->
+        <ui:VisualElement name="panel-ros-uaf" class="hidden"
+            style="position:absolute; left:0; top:0; right:0; bottom:0;
+    align-items:center; justify-content:center;
+    background-color:rgba(0,0,0,0.85); z-index: 100;">
+
+            <ui:VisualElement class="resultado-modal" style="width:500px; padding:30px; background-color:rgb(25, 30, 45);">
+                <ui:Label text="🚨 REPORTE DE OPERACIÓN SOSPECHOSA (ROS)" class="resultado-titulo" style="color: #ff3b3b; font-size: 18px; -unity-font-style: bold;"/>
+                <ui:VisualElement class="divider"/>
+                
+                <ui:Label text="1. Evidencia Adjunta" style="color: white; -unity-font-style: bold; margin-top: 10px;"/>
+                <ui:VisualElement name="ros-dropzone" style="height: 60px; border-width: 2px; border-color: #ff3b3b; border-style: dashed; border-radius: 8px; justify-content: center; align-items: center; margin: 5px 0; background-color: rgba(255,59,59,0.05);">
+                    <ui:Label name="ros-dropzone-label" text="Arrastra una transacción sospechosa aquí o haz clic" style="color: #ff8080; font-size: 12px;"/>
+                </ui:VisualElement>
+                
+                <ui:Label text="2. Fundamento Legal Aplicable" style="color: white; -unity-font-style: bold; margin-top: 10px;"/>
+                <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin: 10px 0;">
+                    <ui:Button name="btn-ley-19913" text="Ley 19.913" class="btn" style="flex-grow: 1; margin-right: 5px; background-color: #1e2637; color: white; border-width: 1px; border-color: #ff3b3b; font-size: 12px;"/>
+                    <ui:Button name="btn-ley-20393" text="Ley 20.393" class="btn" style="flex-grow: 1; margin-right: 5px; background-color: #1e2637; color: white; border-width: 1px; border-color: #ff3b3b; font-size: 12px;"/>
+                    <ui:Button name="btn-ley-21521" text="Ley 21.521" class="btn" style="flex-grow: 1; background-color: #1e2637; color: white; border-width: 1px; border-color: #ff3b3b; font-size: 12px;"/>
+                </ui:VisualElement>
+                
+                <ui:Label name="ros-ley-seleccionada" text="Selecciona una ley aplicable" style="color: #ffbb33; font-size: 13px; -unity-font-style: italic; -unity-text-align: middle-center; margin-bottom: 10px;"/>
+
+                <ui:VisualElement class="resultado-botones" style="margin-top: 15px; flex-direction: row; justify-content: space-between;">
+                    <ui:Button name="btn-ros-cancelar" text="✕ CANCELAR" class="btn btn-menu" style="flex-grow: 1; margin-right: 10px; background-color: #3e4657;"/>
+                    <ui:Button name="btn-ros-enviar" text="🚀 ENVIAR ROS" class="btn btn-reintentar" style="flex-grow: 1; background-color: #ff3b3b;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

@@ -66,12 +66,20 @@ public class UIManager : MonoBehaviour
     private Button btnLogros;
     private VisualElement panelLogros;
     private VisualElement grillaLogros;
-    private Button btnCerrarLogros;
-    private VisualElement toastLogro;
+    private Button btnCerrarLogros;    private VisualElement toastLogro;
     private Label toastLogroNombre;
 
     // Tabs
     private Button tabIdentidad, tabTransacciones, tabHistorial, tabSanciones;
+
+    // Nuevos Elementos para AML, Supervisor y ROS
+    private VisualElement contentIdentidad, contentTransacciones, contentHistorial, contentSanciones;
+    private VisualElement panelRosUaf, rosDropzone;
+    private Label labelBitacoraJunior, rosDropzoneLabel, rosLeySeleccionada;
+    private Button btnLey19913, btnLey20393, btnLey21521, btnRosCancelar, btnRosEnviar;
+    private ScrollView transaccionesScroll, sancionesUboContainer;
+    private string leySeleccionadaUaf = "";
+    private string evidenciaAdjuntaRos = "";
 
     // Estado
     private int turnoActual = 1;
@@ -92,6 +100,77 @@ public class UIManager : MonoBehaviour
     public event System.Action<float> OnTiempoChanged;         // tiempoRestante
     public event System.Action<bool> OnJornadaTerminada;       // true=victoria, false=derrota
     public event System.Action<int> OnMultiplicadorChanged;    // nuevoMultiplicador
+
+    void OnEnable()
+    {
+        RoleManager.OnRolCambiado += AlCambiarRol;
+        RoleManager.OnNivelCambiado += AlCambiarNivel;
+    }
+
+    void OnDisable()
+    {
+        RoleManager.OnRolCambiado -= AlCambiarRol;
+        RoleManager.OnNivelCambiado -= AlCambiarNivel;
+    }
+
+    private void AlCambiarNivel(RoleManager.NivelJuego nuevoNivel)
+    {
+        ConfigurarUIPorNivelYRol();
+    }
+
+    private void AlCambiarRol(RoleManager.RolAnalista nuevoRol)
+    {
+        ConfigurarUIPorNivelYRol();
+    }
+
+    private void ConfigurarUIPorNivelYRol()
+    {
+        if (RoleManager.Instance == null) return;
+        
+        var nivel = RoleManager.Instance.nivelActual;
+        var rol = RoleManager.Instance.rolActivo;
+
+        // Resetear visibilidad de pestañas
+        if (tabIdentidad != null) tabIdentidad.RemoveFromClassList("hidden");
+        if (tabTransacciones != null) tabTransacciones.RemoveFromClassList("hidden");
+        if (tabHistorial != null) tabHistorial.RemoveFromClassList("hidden");
+        if (tabSanciones != null) tabSanciones.RemoveFromClassList("hidden");
+        
+        if (hintCliente != null) hintCliente.RemoveFromClassList("hidden");
+
+        if (nivel == RoleManager.NivelJuego.Nivel1)
+        {
+            // Nivel 1: Solo KYC
+            ActivarTab("tab-identidad");
+            if (tabTransacciones != null) tabTransacciones.AddToClassList("hidden");
+            if (tabHistorial != null) tabHistorial.AddToClassList("hidden");
+            if (tabSanciones != null) tabSanciones.AddToClassList("hidden");
+        }
+        else if (nivel == RoleManager.NivelJuego.Nivel2)
+        {
+            // Nivel 2: Multi-rol
+            if (tabHistorial != null) tabHistorial.AddToClassList("hidden");
+            if (tabSanciones != null) tabSanciones.AddToClassList("hidden");
+            
+            if (rol == RoleManager.RolAnalista.Analista_KYC)
+            {
+                ActivarTab("tab-identidad");
+                if (tabTransacciones != null) tabTransacciones.AddToClassList("hidden"); // Ocultar al KYC
+            }
+            else
+            {
+                ActivarTab("tab-transacciones");
+                if (tabIdentidad != null) tabIdentidad.AddToClassList("hidden"); // Ocultar al AML
+                if (hintCliente != null) hintCliente.AddToClassList("hidden"); // AML no interroga directamente
+                CerrarDialogo();
+            }
+        }
+        else if (nivel == RoleManager.NivelJuego.Nivel3)
+        {
+            // Nivel 3: Supervisor
+            ActivarTab("tab-historial");
+        }
+    }
 
     void Awake()
     {
@@ -208,6 +287,28 @@ public class UIManager : MonoBehaviour
 
         if (btnLogros != null) btnLogros.clicked += AbrirPanelLogros;
         if (btnCerrarLogros != null) btnCerrarLogros.clicked += CerrarPanelLogros;
+
+        // Inicializar nuevos elementos para AML, Supervisor y ROS
+        contentTransacciones = root.Q<VisualElement>("content-transacciones");
+        contentHistorial     = root.Q<VisualElement>("content-historial");
+        contentSanciones     = root.Q<VisualElement>("content-sanciones");
+        
+        panelRosUaf          = root.Q<VisualElement>("panel-ros-uaf");
+        rosDropzone          = root.Q<VisualElement>("ros-dropzone");
+        rosDropzoneLabel     = root.Q<Label>("ros-dropzone-label");
+        rosLeySeleccionada   = root.Q<Label>("ros-ley-seleccionada");
+        
+        btnLey19913          = root.Q<Button>("btn-ley-19913");
+        btnLey20393          = root.Q<Button>("btn-ley-20393");
+        btnLey21521          = root.Q<Button>("btn-ley-21521");
+        btnRosCancelar       = root.Q<Button>("btn-ros-cancelar");
+        btnRosEnviar         = root.Q<Button>("btn-ros-enviar");
+        
+        transaccionesScroll  = root.Q<ScrollView>("transacciones-scroll");
+        sancionesUboContainer = root.Q<ScrollView>("sanciones-ubo-container");
+        labelBitacoraJunior  = root.Q<Label>("label-bitacora-junior");
+        
+        ConfigurarBotonLeyes();
     }
 
     void ConfigurarDialogo()
@@ -337,13 +438,45 @@ public class UIManager : MonoBehaviour
     {
         var root = uiDocument.rootVisualElement;
         foreach (var tab in new[] { tabIdentidad, tabTransacciones, tabHistorial, tabSanciones })
-            tab.RemoveFromClassList("tab-active");
-        root.Q<Button>(tabActivo).AddToClassList("tab-active");
+        {
+            if (tab != null) tab.RemoveFromClassList("tab-active");
+        }
+        
+        var selectedTab = root.Q<Button>(tabActivo);
+        if (selectedTab != null) selectedTab.AddToClassList("tab-active");
+
+        // Ocultar todas las secciones
+        if (contentIdentidad == null) contentIdentidad = root.Q<VisualElement>("content-identidad");
+        
+        if (contentIdentidad != null) contentIdentidad.AddToClassList("hidden");
+        if (contentTransacciones != null) contentTransacciones.AddToClassList("hidden");
+        if (contentHistorial != null) contentHistorial.AddToClassList("hidden");
+        if (contentSanciones != null) contentSanciones.AddToClassList("hidden");
+
+        // Mostrar la seleccionada
+        string contentName = tabActivo switch
+        {
+            "tab-identidad" => "content-identidad",
+            "tab-transacciones" => "content-transacciones",
+            "tab-historial" => "content-historial",
+            "tab-sanciones" => "content-sanciones",
+            _ => "content-identidad"
+        };
+
+        var targetContent = root.Q<VisualElement>(contentName);
+        if (targetContent != null) targetContent.RemoveFromClassList("hidden");
     }
 
     void TomarDecision(string decision)
     {
         if (!juegoActivo) return;
+
+        // Interceptar si es Nivel 3 y es un rechazo para exigir el formulario de ROS
+        if (RoleManager.Instance != null && RoleManager.Instance.nivelActual == RoleManager.NivelJuego.Nivel3 && decision == "RECHAZADO")
+        {
+            AbrirFormularioROS();
+            return;
+        }
 
         bool correcto = caseManager?.ValidarDecision(decision) ?? false;
         CasoData caso = caseManager?.CasoActual;
@@ -437,7 +570,16 @@ public class UIManager : MonoBehaviour
         }
         turnoActual++;
         OnTurnoChanged?.Invoke(turnoActual, turnoTotal);
-        tiempoRestante = 60f;
+        
+        // El Nivel 3 de supervisor otorga 90 segundos por caso debido a la mayor complejidad de auditar UBO y transacciones
+        if (RoleManager.Instance != null && RoleManager.Instance.nivelActual == RoleManager.NivelJuego.Nivel3)
+        {
+            tiempoRestante = 90f;
+        }
+        else
+        {
+            tiempoRestante = 60f;
+        }
         CerrarDialogo();
         CambiarPersonaje();
         if (cameraController != null)
@@ -525,6 +667,12 @@ public class UIManager : MonoBehaviour
 
         // Señales automáticas y checkboxes
         MostrarSeñalesAutomaticas(caso);
+
+        // Poblar las transacciones y socios del nivel/caso
+        PoblarTransaccionesYSocios(caso);
+
+        // Actualizar visibilidad de pestañas y botones según nivel/rol
+        ConfigurarUIPorNivelYRol();
     }
 
     public void MostrarBotonReporte(ObjetoSospechoso obj)
@@ -888,5 +1036,267 @@ public class UIManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         if (toastLogro != null) toastLogro.AddToClassList("hidden");
+    }
+
+    // ===================== AML / SUPERVISOR / ROS HELPERS =====================
+    void PoblarTransaccionesYSocios(CasoData caso)
+    {
+        if (transaccionesScroll != null)
+        {
+            transaccionesScroll.Clear();
+            if (caso.transacciones != null)
+            {
+                foreach (var tx in caso.transacciones)
+                {
+                    VisualElement row = new VisualElement();
+                    row.AddToClassList("transaccion-row");
+                    
+                    Label lblFecha = new Label(tx.fecha);
+                    lblFecha.style.fontSize = 11;
+                    lblFecha.style.color = new Color(0.7f, 0.7f, 0.7f);
+                    row.Add(lblFecha);
+                    
+                    Label lblDesc = new Label(tx.descripcion);
+                    lblDesc.style.fontSize = 12;
+                    lblDesc.style.color = Color.white;
+                    row.Add(lblDesc);
+                    
+                    Label lblMonto = new Label((tx.monto > 0 ? "+" : "") + tx.monto.ToString("N0") + " CLP");
+                    lblMonto.AddToClassList("transaccion-monto");
+                    lblMonto.AddToClassList(tx.monto < 0 ? "debit" : "credit");
+                    row.Add(lblMonto);
+
+                    // Hacer clickeable para adjuntar evidencia al ROS en Nivel 3
+                    row.RegisterCallback<ClickEvent>(evt => {
+                        if (RoleManager.Instance != null && RoleManager.Instance.nivelActual == RoleManager.NivelJuego.Nivel3)
+                        {
+                            evidenciaAdjuntaRos = $"{tx.descripcion} ({tx.monto:N0} CLP)";
+                            if (rosDropzoneLabel != null)
+                            {
+                                rosDropzoneLabel.text = $"✓ Evidencia: {evidenciaAdjuntaRos}";
+                                rosDropzoneLabel.style.color = new Color(0.2f, 0.9f, 0.4f);
+                            }
+                            Debug.Log($"[ROS] Evidencia adjuntada: {evidenciaAdjuntaRos}");
+                        }
+                    });
+
+                    transaccionesScroll.Add(row);
+                }
+            }
+        }
+
+        if (sancionesUboContainer != null)
+        {
+            sancionesUboContainer.Clear();
+            if (caso.estructuraSocietaria != null)
+            {
+                foreach (var socio in caso.estructuraSocietaria)
+                {
+                    VisualElement row = new VisualElement();
+                    row.AddToClassList("ubo-row");
+                    
+                    Label lblNombre = new Label($"{socio.nombre} (RUT: {socio.rut})");
+                    lblNombre.style.fontSize = 12;
+                    lblNombre.style.color = Color.white;
+                    row.Add(lblNombre);
+                    
+                    Label lblPorcentaje = new Label($"{socio.porcentajeParticipacion:F1}%");
+                    lblPorcentaje.style.fontSize = 12;
+                    lblPorcentaje.style.color = new Color(0f, 0.8f, 0.6f);
+                    row.Add(lblPorcentaje);
+                    
+                    if (socio.esPEP)
+                    {
+                        Label alertPep = new Label("PEP");
+                        alertPep.AddToClassList("ubo-pep-alert");
+                        row.Add(alertPep);
+                    }
+                    
+                    sancionesUboContainer.Add(row);
+                }
+            }
+        }
+
+        if (labelBitacoraJunior != null)
+        {
+            labelBitacoraJunior.text = string.IsNullOrEmpty(caso.notasJuniorEscalado) 
+                ? "No hay registros previos de analistas." 
+                : caso.notasJuniorEscalado;
+        }
+    }
+
+    void ConfigurarBotonLeyes()
+    {
+        if (btnLey19913 != null) btnLey19913.clicked += () => SeleccionarLey("Ley 19.913", btnLey19913);
+        if (btnLey20393 != null) btnLey20393.clicked += () => SeleccionarLey("Ley 20.393", btnLey20393);
+        if (btnLey21521 != null) btnLey21521.clicked += () => SeleccionarLey("Ley 21.521", btnLey21521);
+        
+        if (btnRosCancelar != null) btnRosCancelar.clicked += CerrarFormularioROS;
+        if (btnRosEnviar != null) btnRosEnviar.clicked += EnviarROS;
+        
+        // Clic en dropzone simula adjuntar evidencia rápida del expediente si no se ha clickeado una transacción
+        if (rosDropzone != null) {
+            rosDropzone.RegisterCallback<ClickEvent>(e => {
+                if (string.IsNullOrEmpty(evidenciaAdjuntaRos)) {
+                    evidenciaAdjuntaRos = "Transacción sospechosa de $13.500.000 a Shell Corp";
+                    if (rosDropzoneLabel != null) {
+                        rosDropzoneLabel.text = "✓ Adjunto: " + evidenciaAdjuntaRos;
+                        rosDropzoneLabel.style.color = new Color(0.2f, 0.9f, 0.4f);
+                    }
+                }
+            });
+        }
+    }
+    
+    void SeleccionarLey(string ley, Button boton)
+    {
+        leySeleccionadaUaf = ley;
+        if (rosLeySeleccionada != null)
+        {
+            rosLeySeleccionada.text = $"Fundamento: {ley}";
+            rosLeySeleccionada.style.color = new Color(1f, 0.8f, 0f);
+        }
+        
+        foreach (var btn in new[] { btnLey19913, btnLey20393, btnLey21521 })
+        {
+            if (btn != null) btn.RemoveFromClassList("btn-ley-selected");
+        }
+        if (boton != null) boton.AddToClassList("btn-ley-selected");
+    }
+
+    void AbrirFormularioROS()
+    {
+        if (panelRosUaf != null)
+        {
+            panelRosUaf.RemoveFromClassList("hidden");
+            leySeleccionadaUaf = "";
+            evidenciaAdjuntaRos = "";
+            
+            if (rosDropzoneLabel != null)
+            {
+                rosDropzoneLabel.text = "Arrastra una transacción sospechosa aquí o haz clic";
+                rosDropzoneLabel.style.color = new Color(1f, 0.5f, 0.5f);
+            }
+            if (rosLeySeleccionada != null)
+            {
+                rosLeySeleccionada.text = "Selecciona una ley aplicable";
+                rosLeySeleccionada.style.color = Color.white;
+            }
+            
+            foreach (var btn in new[] { btnLey19913, btnLey20393, btnLey21521 })
+            {
+                if (btn != null) btn.RemoveFromClassList("btn-ley-selected");
+            }
+        }
+    }
+
+    void CerrarFormularioROS()
+    {
+        if (panelRosUaf != null)
+        {
+            panelRosUaf.AddToClassList("hidden");
+        }
+    }
+
+    void EnviarROS()
+    {
+        if (string.IsNullOrEmpty(leySeleccionadaUaf))
+        {
+            Debug.LogError("[ROS] Debes seleccionar una ley aplicable.");
+            if (rosLeySeleccionada != null)
+            {
+                rosLeySeleccionada.text = "⚠️ SELECCIONA UNA LEY";
+                rosLeySeleccionada.style.color = Color.red;
+            }
+            return;
+        }
+
+        if (string.IsNullOrEmpty(evidenciaAdjuntaRos))
+        {
+            Debug.LogError("[ROS] Debes adjuntar evidencia transaccional.");
+            if (rosDropzoneLabel != null)
+            {
+                rosDropzoneLabel.text = "⚠️ DEBES ADJUNTAR EVIDENCIA (Haz clic en una transacción)";
+                rosDropzoneLabel.style.color = Color.red;
+            }
+            return;
+        }
+
+        CerrarFormularioROS();
+        FinalizarDecisionConROS();
+    }
+
+    void FinalizarDecisionConROS()
+    {
+        CasoData caso = caseManager?.CasoActual;
+        bool decisionCorrecta = caseManager?.ValidarDecision("RECHAZADO") ?? false;
+        
+        bool leyCorrecta = false;
+        if (caso != null)
+        {
+            if (caso.normativaAplicable.Contains(leySeleccionadaUaf) || 
+                (leySeleccionadaUaf == "Ley 19.913" && caso.normativaAplicable.Contains("19.913")) ||
+                (leySeleccionadaUaf == "Ley 20.393" && caso.normativaAplicable.Contains("20.393")) ||
+                (leySeleccionadaUaf == "Ley 21.521" && caso.normativaAplicable.Contains("21.521")))
+            {
+                leyCorrecta = true;
+            }
+        }
+
+        bool todoCorrecto = decisionCorrecta && leyCorrecta;
+
+        if (todoCorrecto)
+        {
+            rachaCorrectas++;
+            if (rachaCorrectas > rachaMaxima) rachaMaxima = rachaCorrectas;
+            
+            multiplicador = 1.0f + (rachaCorrectas - 1) * 0.5f;
+            multiplicador = Mathf.Min(multiplicador, 3.0f);
+            
+            int puntosConMulti = Mathf.RoundToInt(250 * multiplicador);
+            AgregarPuntaje(puntosConMulti);
+            OnMultiplicadorChanged?.Invoke(rachaCorrectas);
+            
+            AudioManager.Instance?.SFXAprobar();
+        }
+        else
+        {
+            rachaCorrectas = 0;
+            multiplicador = 1.0f;
+            OnMultiplicadorChanged?.Invoke(0);
+            
+            int penalizacion = -150; 
+            AgregarPuntaje(penalizacion);
+            
+            AudioManager.Instance?.SFXRechazar();
+        }
+
+        MostrarFeedbackDecision("RECHAZADO");
+        
+        if (caso != null)
+        {
+            if (!decisionCorrecta)
+            {
+                MostrarPanelFeedback(false, "RECHAZAR (con ROS)", caso);
+            }
+            else if (!leyCorrecta)
+            {
+                feedbackTitulo.text = "FUNDAMENTO ROS INCORRECTO";
+                feedbackTitulo.style.color = new UnityEngine.Color(0.9f, 0.3f, 0.3f);
+                feedbackDecision.text = $"Fundamento seleccionado: {leySeleccionadaUaf} | Requerido: {caso.normativaAplicable}";
+                feedbackNormativa.text = caso.normativaAplicable;
+                feedbackExplicacion.text = "El rechazo del caso era correcto, pero fundamentaste el ROS con una ley inaplicable. Debes estudiar la competencia de la Ley 19.913 (UAF), Ley 20.393 (Personas Jurídicas) y Ley 21.521 (Fintech).";
+                panelFeedback.RemoveFromClassList("hidden");
+            }
+            else
+            {
+                feedbackTitulo.text = "ROS PERFECTO (CUMPLIMIENTO EXITOSO)";
+                feedbackTitulo.style.color = new UnityEngine.Color(0.2f, 0.8f, 0.4f);
+                feedbackDecision.text = $"Fundamento: {leySeleccionadaUaf} | Evidencia: {evidenciaAdjuntaRos}";
+                feedbackNormativa.text = caso.normativaAplicable;
+                feedbackExplicacion.text = $"¡Excelente! Rechazaste el caso y fundamentaste correctamente el ROS bajo la {leySeleccionadaUaf}. Evidencia adjunta registrada en el expediente de la UAF.";
+                panelFeedback.RemoveFromClassList("hidden");
+            }
+        }
     }
 }
