@@ -8,7 +8,9 @@
 		<ui:VisualElement name="sello-container" class="hidden" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; align-items: center; justify-content: center;">
 			<ui:Label name="sello-texto" text="APROBADO" style="font-size: 72px; -unity-font-style: bold; rotate: -15deg; border-width: 4px; padding: 10px 20px;" />
 		</ui:VisualElement>
+
         <ui:VisualElement name="top-bar" class="top-bar">
+            <ui:Label name="label-nivel" text="NIVEL 1 — ANALISTA KYC" class="label-nivel"/>
             <ui:Label name="label-turno" text="TURNO 1 / 5" class="top-label left-label"/>
             <ui:VisualElement name="progreso-container" class="progreso-container">
                 <ui:VisualElement name="progreso-fill" class="progreso-fill"/>
@@ -126,7 +128,7 @@
                         <ui:ScrollView name="transacciones-scroll" class="transacciones-list" style="flex-grow: 1; margin: 10px 0; max-height: 180px;">
                             <!-- Se poblará dinámicamente desde el script -->
                         </ui:ScrollView>
-                        <ui:Label text="Arrastra una transacción sospechosa como evidencia para el ROS." class="discrepancia-hint"/>
+                        <ui:Label name="hint-ros-drag" text="Arrastra una transacción sospechosa como evidencia para el ROS." class="discrepancia-hint"/>
                     </ui:VisualElement>
 
                     <!-- Sección Historial (Bitácora de Auditoría para Supervisor) -->
@@ -157,10 +159,11 @@
                 <ui:Label text="🚨 REPORTE DE OPERACIÓN SOSPECHOSA (ROS)" class="resultado-titulo" style="color: #ff3b3b; font-size: 18px; -unity-font-style: bold;"/>
                 <ui:VisualElement class="divider"/>
                 
-                <ui:Label text="1. Evidencia Adjunta" style="color: white; -unity-font-style: bold; margin-top: 10px;"/>
-                <ui:VisualElement name="ros-dropzone" style="height: 60px; border-width: 2px; border-color: #ff3b3b; border-style: dashed; border-radius: 8px; justify-content: center; align-items: center; margin: 5px 0; background-color: rgba(255,59,59,0.05);">
-                    <ui:Label name="ros-dropzone-label" text="Arrastra una transacción sospechosa aquí o haz clic" style="color: #ff8080; font-size: 12px;"/>
-                </ui:VisualElement>
+                <ui:Label text="1. Selecciona la Evidencia Transaccional" style="color: white; -unity-font-style: bold; margin-top: 10px;"/>
+                <ui:ScrollView name="ros-transacciones-scroll" style="height: 120px; border-width: 1px; border-color: #ff3b3b; border-radius: 8px; margin: 5px 0; background-color: rgba(25, 30, 45, 0.5);">
+                    <!-- Se poblará dinámicamente con las transacciones del caso -->
+                </ui:ScrollView>
+                <ui:Label name="ros-dropzone-label" text="Selecciona una transacción de la lista anterior" style="color: #ff8080; font-size: 13px; -unity-font-style: italic; -unity-text-align: middle-center; margin-bottom: 5px;"/>
                 
                 <ui:Label text="2. Fundamento Legal Aplicable" style="color: white; -unity-font-style: bold; margin-top: 10px;"/>
                 <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin: 10px 0;">
@@ -230,7 +233,7 @@
                 <ui:Label name="resultado-racha-max" text="Racha máxima: 0" class="resultado-racha"/>
                 <ui:VisualElement class="resultado-botones">
                     <ui:Button name="btn-reintentar" text="↻ REINTENTAR" class="btn btn-reintentar"/>
-                    <ui:Button name="btn-menu" text="◄ MENÚ PRINCIPAL" class="btn btn-menu"/>
+                    <ui:Button name="btn-menu" text="📊 VER RESULTADOS" class="btn btn-menu"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
@@ -252,6 +255,42 @@
             <ui:Label text="🏆 Logro Desbloqueado!" style="-unity-font-style: bold; color: gold;"/>
             <ui:Label name="toast-logro-nombre" text="Nombre del logro" style="color: white;"/>
         </ui:VisualElement>
+
+		<!-- Alerta de ascenso de nivel (al final del DOM para renderizar encima de todo) -->
+		<ui:VisualElement name="alerta-nivel" class="alerta-nivel hidden">
+			<ui:VisualElement class="alerta-nivel-contenido">
+				<ui:Label name="alerta-nivel-titulo" text="⬆ ASCENSO" class="alerta-nivel-titulo"/>
+				<ui:Label name="alerta-nivel-subtitulo" text="Nivel 2 — Analista KYC/AML" class="alerta-nivel-subtitulo"/>
+				<ui:VisualElement class="alerta-nivel-divider"/>
+				<ui:Label name="alerta-nivel-instruccion" text="" class="alerta-nivel-instruccion"/>
+				<ui:Button name="btn-alerta-continuar" text="CONTINUAR" class="btn-alerta-continuar"/>
+			</ui:VisualElement>
+		</ui:VisualElement>
+
+		<!-- Alerta de advertencia / coordinación (modal) -->
+		<ui:VisualElement name="alerta-coordinacion" class="alerta-nivel hidden">
+			<ui:VisualElement class="alerta-nivel-contenido" style="border-color: rgb(220, 50, 50);">
+				<ui:Label text="⚠️ COORDINACIÓN" class="alerta-nivel-titulo" style="color: rgb(220, 50, 50); font-size: 32px;"/>
+				<ui:Label text="Nivel 2 — División de Funciones" class="alerta-nivel-subtitulo"/>
+				<ui:VisualElement class="alerta-nivel-divider" style="background-color: rgba(220, 50, 50, 0.3);"/>
+				<ui:Label text="Antes de decidir, debes coordinar consultando el escritorio de tu compañero (Analista 2) para revisar el historial transaccional de este cliente.&#10;&#10;Presiona la tecla W para alternar entre escritorios." class="alerta-nivel-instruccion" style="max-width: 480px;"/>
+				<ui:Button name="btn-alerta-coordinacion-entendido" text="ENTENDIDO" class="btn-alerta-continuar" style="background-color: rgb(220, 50, 50); color: white;"/>
+			</ui:VisualElement>
+		</ui:VisualElement>
+
+		<!-- Alerta / Detalle de Ley (modal para Supervisor) -->
+		<ui:VisualElement name="alerta-ley" class="alerta-nivel hidden">
+			<ui:VisualElement class="alerta-nivel-contenido" style="border-color: rgb(0, 210, 160); max-width: 500px; padding: 30px;">
+				<ui:Label name="alerta-ley-titulo" text="DETALLE DE LEY" class="alerta-nivel-titulo" style="font-size: 24px; color: rgb(0, 210, 160);"/>
+				<ui:Label name="alerta-ley-subtitulo" text="Fundamento Legal para el ROS" class="alerta-nivel-subtitulo" style="font-size: 15px;"/>
+				<ui:VisualElement class="alerta-nivel-divider" style="background-color: rgba(0, 210, 160, 0.3);"/>
+				<ui:Label name="alerta-ley-descripcion" text="Descripción de la ley seleccionada." class="alerta-nivel-instruccion" style="font-size: 14px; -unity-text-align: upper-center; white-space: normal; max-width: 440px; margin-bottom: 25px;"/>
+				<ui:VisualElement style="flex-direction: row; justify-content: space-around; width: 100%;">
+					<ui:Button name="btn-alerta-ley-cancelar" text="VOLVER" class="btn-alerta-continuar" style="background-color: rgba(255,255,255,0.1); color: white; width: 150px; margin: 0 10px;"/>
+					<ui:Button name="btn-alerta-ley-confirmar" text="SELECCIONAR" class="btn-alerta-continuar" style="width: 170px; margin: 0 10px;"/>
+				</ui:VisualElement>
+			</ui:VisualElement>
+		</ui:VisualElement>
 
     </ui:VisualElement>
 </ui:UXML>

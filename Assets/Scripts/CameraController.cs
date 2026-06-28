@@ -56,6 +56,23 @@ public class CameraController : MonoBehaviour
 
     void Awake()
     {
+        // Auto-descubrimiento para Analista 1 (KYC) si están vacíos
+        if (puntoClienteKYC == null)
+        {
+            GameObject go = GameObject.Find("CameraCliente") ?? GameObject.Find("CameraCliente1");
+            if (go != null) puntoClienteKYC = go.transform;
+        }
+        if (puntoMonitorKYC == null)
+        {
+            GameObject go = GameObject.Find("CameraMonitor") ?? GameObject.Find("CameraMonitor1");
+            if (go != null) puntoMonitorKYC = go.transform;
+        }
+        if (puntoNotepadKYC == null)
+        {
+            GameObject go = GameObject.Find("CameraNotepad") ?? GameObject.Find("CameraNotepad1");
+            if (go != null) puntoNotepadKYC = go.transform;
+        }
+
         // Inicializar respaldos si no se han asignado en inspector usando los valores anteriores
         if (puntoClienteKYC == null) puntoClienteKYC = puntoCliente;
         if (puntoMonitorKYC == null) puntoMonitorKYC = puntoMonitor;
@@ -165,6 +182,12 @@ public class CameraController : MonoBehaviour
         uiManager = Object.FindFirstObjectByType<UIManager>();
         if (uiManager != null)
             uiManager.ActualizarVista(VistaActiva.Cliente);
+
+        // Alinear la cámara al nivel de inicio para evitar desajustes
+        if (RoleManager.Instance != null)
+        {
+            AlCambiarNivel(RoleManager.Instance.nivelActual);
+        }
     }
 
     void Update()

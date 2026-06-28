@@ -114,6 +114,7 @@
       ],
       "nivelRiesgo": "alto",
       "requiereROS": true,
+      "transaccionSospechosaCorrecta": "TRANSFERENCIA EXTERIOR",
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62",
       "explicacion": "La empresa declara consultoría pero sus transacciones muestran movimientos de efectivo en múltiples depósitos bajo USD 10.000 (smurfing). Actividad incompatible con el perfil. Debe rechazarse y generarse un ROS.",
@@ -336,6 +337,7 @@
       ],
       "nivelRiesgo": "alto",
       "requiereROS": true,
+      "transaccionSospechosaCorrecta": "TRANSFERENCIA EXTERIOR",
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62 — Sanctions Screening",
       "explicacion": "La foto del documento no coincide con la persona presente, lo que constituye una posible suplantación de identidad. Adicionalmente declara cuenta en el extranjero no informada previamente. Debe rechazarse y generarse un reporte de operación sospechosa (ROS).",
@@ -488,6 +490,7 @@
       ],
       "nivelRiesgo": "alto",
       "requiereROS": true,
+      "transaccionSospechosaCorrecta": "TRANSFERENCIA EXTERIOR",
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913",
       "explicacion": "Riesgo ALD.",
@@ -653,6 +656,7 @@
       ],
       "nivelRiesgo": "alto",
       "requiereROS": true,
+      "transaccionSospechosaCorrecta": "TRANSFERENCIA EXTERIOR",
       "decisionCorrecta": "RECHAZAR",
       "normativaAplicable": "Ley 19.913",
       "explicacion": "Demasiado riesgo y discrepancias.",
@@ -766,6 +770,440 @@
       ],
       "estructuraSocietaria": [],
       "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron señales de KYC consistentes con Documentación inválida...."
+    },
+    {
+      "id": "#00152",
+      "tipo": "AML",
+      "prioridad": "ALTA",
+      "cliente": {
+        "nombre": "Inversiones Pacífico Ltda.",
+        "rut": "77.890.123-4",
+        "nacionalidad": "Chilena",
+        "actividad": "Corredora de propiedades",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": false
+      },
+      "respuestasCliente": {
+        "actividad": "Nos dedicamos a la intermediación de bienes raíces comerciales en la zona norte.",
+        "origen_fondos": "Los fondos provienen de comisiones por ventas inmobiliarias.",
+        "esPEP": "No aplica, somos empresa.",
+        "cuentasExtranjero": "Tenemos una cuenta operativa en Panamá para clientes internacionales."
+      },
+      "discrepancias": [
+        "actividadConcuerda"
+      ],
+      "señalesAlerta": [
+        "Cuenta en jurisdicción de alto riesgo (Panamá)",
+        "Volumen transaccional incompatible con corredora de propiedades"
+      ],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": [
+        "cuentasExtranjero",
+        "origen_fondos"
+      ],
+      "nivelRiesgo": "alto",
+      "requiereROS": true,
+      "transaccionSospechosaCorrecta": "TRANSFERENCIA INTERNACIONAL ENVIADA",
+      "decisionCorrecta": "RECHAZAR",
+      "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62",
+      "explicacion": "La empresa opera como corredora de propiedades pero presenta transacciones internacionales a Panamá, jurisdicción de alto riesgo GAFI. Volumen incompatible con actividad declarada. Debe rechazarse y emitir ROS.",
+      "transacciones": [
+        {
+          "fecha": "2026-05-15",
+          "descripcion": "TRANSFERENCIA INTERNACIONAL RECIBIDA",
+          "monto": 25000000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "OFFSHORE HOLDINGS (PANAMÁ)",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-05-18",
+          "descripcion": "COMPRA PROPIEDAD",
+          "monto": -22000000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "NOTARÍA CENTRAL"
+        },
+        {
+          "fecha": "2026-05-20",
+          "descripcion": "TRANSFERENCIA INTERNACIONAL ENVIADA",
+          "monto": -2500000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "SHELL CORP (PANAMÁ)"
+        }
+      ],
+      "estructuraSocietaria": [
+        {
+          "nombre": "Carlos Méndez",
+          "rut": "11.222.333-4",
+          "porcentajeParticipacion": 30.0,
+          "esPEP": false
+        },
+        {
+          "nombre": "Sociedad Anónima Cerrada",
+          "rut": "99.000.111-K",
+          "porcentajeParticipacion": 70.0,
+          "esPEP": false
+        }
+      ],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Se detectaron transferencias internacionales a jurisdicción de alto riesgo incompatibles con la actividad declarada."
+    },
+    {
+      "id": "#00153",
+      "tipo": "KYC",
+      "prioridad": "MEDIA",
+      "cliente": {
+        "nombre": "Sofía Contreras Reyes",
+        "rut": "18.765.432-1",
+        "nacionalidad": "Chilena",
+        "actividad": "Diseñadora gráfica freelance",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Trabajo como diseñadora gráfica independiente, atiendo clientes por redes sociales.",
+        "origen_fondos": "Mis ingresos provienen de proyectos de diseño y branding para pymes.",
+        "esPEP": "No, no tengo relación con cargos públicos.",
+        "cuentasExtranjero": "No tengo cuentas fuera de Chile."
+      },
+      "discrepancias": [],
+      "señalesAlerta": [],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": [],
+      "nivelRiesgo": "bajo",
+      "requiereROS": false,
+      "decisionCorrecta": "APROBAR",
+      "normativaAplicable": "Circular UAF N°62 — Procedimiento estándar",
+      "explicacion": "Cliente con documentación completa y vigente, actividad coherente con perfil transaccional y sin señales de alerta. Caso aprobado bajo procedimiento estándar KYC.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "TRANSFERENCIA RECIBIDA",
+          "monto": 450000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "PYME DISEÑO LTDA.",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-08",
+          "descripcion": "TRANSFERENCIA RECIBIDA",
+          "monto": 380000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "ESTUDIO CREATIVO SpA",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-12",
+          "descripcion": "PAGO ARRIENDO",
+          "monto": -320000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "PROPIETARIO ARRIENDO"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": ""
+    },
+    {
+      "id": "#00154",
+      "tipo": "AML",
+      "prioridad": "ALTA",
+      "cliente": {
+        "nombre": "Rodrigo Fuentes Acuña",
+        "rut": "14.321.654-7",
+        "nacionalidad": "Chilena",
+        "actividad": "Importador de electrónicos",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": false
+      },
+      "respuestasCliente": {
+        "actividad": "Importo equipos electrónicos desde China para revender en Chile.",
+        "origen_fondos": "Las ganancias provienen de la venta minorista de los productos importados.",
+        "esPEP": "No soy PEP ni tengo familiares en cargos públicos.",
+        "cuentasExtranjero": "Tengo una cuenta en Hong Kong para pagar a proveedores."
+      },
+      "discrepancias": [
+        "actividadConcuerda"
+      ],
+      "señalesAlerta": [
+        "Depósitos en efectivo fraccionados bajo umbral de reporte",
+        "Transferencias a cuenta en Hong Kong sin respaldo documental"
+      ],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": [
+        "origen_fondos",
+        "cuentasExtranjero"
+      ],
+      "nivelRiesgo": "alto",
+      "requiereROS": true,
+      "transaccionSospechosaCorrecta": "TRANSFERENCIA INTERNACIONAL",
+      "decisionCorrecta": "RECHAZAR",
+      "normativaAplicable": "Ley 19.913 — Art. 3 / Circular UAF N°62",
+      "explicacion": "El cliente presenta depósitos en efectivo fraccionados (smurfing) y transferencias a Hong Kong sin documentación de respaldo. Patrón clásico de lavado de activos mediante comercio internacional ficticio.",
+      "transacciones": [
+        {
+          "fecha": "2026-05-28",
+          "descripcion": "DEPOSITO EFECTIVO",
+          "monto": 4900000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-05-29",
+          "descripcion": "DEPOSITO EFECTIVO",
+          "monto": 4850000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-05-30",
+          "descripcion": "DEPOSITO EFECTIVO",
+          "monto": 4750000,
+          "tipo": "DEPOSITO_EFECTIVO",
+          "origen": "DESCONOCIDO",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-02",
+          "descripcion": "TRANSFERENCIA INTERNACIONAL",
+          "monto": -14000000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "ELECTRONICS SUPPLY HK (HONG KONG)"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Patrón de fraccionamiento detectado con transferencias internacionales sin respaldo."
+    },
+    {
+      "id": "#00155",
+      "tipo": "Compliance",
+      "prioridad": "MEDIA",
+      "cliente": {
+        "nombre": "Andrea López Muñoz",
+        "rut": "16.543.876-2",
+        "nacionalidad": "Chilena",
+        "actividad": "Profesora universitaria",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Soy profesora titular en una universidad estatal.",
+        "origen_fondos": "Mi sueldo como académica y consultorías esporádicas.",
+        "esPEP": "No tengo vinculación política.",
+        "cuentasExtranjero": "No poseo cuentas en el extranjero."
+      },
+      "discrepancias": [],
+      "señalesAlerta": [],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": [],
+      "nivelRiesgo": "bajo",
+      "requiereROS": false,
+      "decisionCorrecta": "APROBAR",
+      "normativaAplicable": "Circular UAF N°62 — Procedimiento estándar",
+      "explicacion": "Profesora universitaria con documentación completa, actividad verificada y perfil transaccional coherente. Sin señales de alerta. Caso aprobado.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "ABONO SUELDO UNIVERSIDAD",
+          "monto": 1800000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "UNIVERSIDAD ESTATAL",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "PAGO DIVIDENDO HIPOTECARIO",
+          "monto": -650000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "BANCO ESTADO"
+        },
+        {
+          "fecha": "2026-06-10",
+          "descripcion": "COMPRA LIBRERÍA",
+          "monto": -45000,
+          "tipo": "COMPRA_DEBITO",
+          "origen": "CLIENTE",
+          "destino": "LIBRERÍA ANTÁRTICA"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": ""
+    },
+    {
+      "id": "#00156",
+      "tipo": "KYC",
+      "prioridad": "ALTA",
+      "cliente": {
+        "nombre": "Ricardo Soto Peña",
+        "rut": "8.654.321-0",
+        "nacionalidad": "Chilena",
+        "actividad": "Empresario minero",
+        "esPEP": true
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Soy dueño de una empresa minera mediana en la región de Atacama.",
+        "origen_fondos": "Los fondos provienen de la venta de minerales y contratos con ENAMI.",
+        "esPEP": "Fui concejal de Copiapó entre 2016 y 2020.",
+        "cuentasExtranjero": "Tengo una cuenta de inversiones en Estados Unidos."
+      },
+      "discrepancias": [],
+      "señalesAlerta": [
+        "Cliente es PEP (ex-concejal)",
+        "Montos transaccionales elevados para perfil declarado"
+      ],
+      "señalesAutomaticas": [
+        "esPEP"
+      ],
+      "señalesInteraccion": [
+        "esPEP",
+        "cuentasExtranjero"
+      ],
+      "nivelRiesgo": "alto",
+      "requiereROS": false,
+      "decisionCorrecta": "ESCALAR",
+      "normativaAplicable": "Circular UAF N°62 — Art. 12 (Due Diligence Reforzada PEP)",
+      "explicacion": "Cliente identificado como PEP (ex-concejal). Aunque su documentación está en orden y la actividad es coherente, la normativa exige Due Diligence Reforzada para PEP. Debe escalarse al oficial de cumplimiento.",
+      "transacciones": [
+        {
+          "fecha": "2026-05-20",
+          "descripcion": "TRANSFERENCIA RECIBIDA ENAMI",
+          "monto": 35000000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "ENAMI",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-05-25",
+          "descripcion": "INVERSIÓN FONDO MUTUO",
+          "monto": -15000000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "CORREDORA DE BOLSA"
+        },
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "TRANSFERENCIA USA",
+          "monto": -8000000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "INVESTMENT ACCOUNT (USA)"
+        }
+      ],
+      "estructuraSocietaria": [],
+      "notasJuniorEscalado": "Alerta emitida por Analista Junior. Cliente PEP con transacciones internacionales que requiere Due Diligence Reforzada."
+    },
+    {
+      "id": "#00157",
+      "tipo": "AML",
+      "prioridad": "MEDIA",
+      "cliente": {
+        "nombre": "Transportes Rápidos SpA",
+        "rut": "76.111.222-3",
+        "nacionalidad": "Chilena",
+        "actividad": "Transporte de carga terrestre",
+        "esPEP": false
+      },
+      "documentos": {
+        "cedulaVigente": true,
+        "fotoCoincide": true,
+        "rutValido": true,
+        "domicilioVerificado": true,
+        "actividadConcuerda": true
+      },
+      "respuestasCliente": {
+        "actividad": "Realizamos transporte de carga entre Santiago y regiones.",
+        "origen_fondos": "Facturación por servicios de transporte a empresas grandes.",
+        "esPEP": "No aplica.",
+        "cuentasExtranjero": "No tenemos cuentas en el exterior."
+      },
+      "discrepancias": [],
+      "señalesAlerta": [],
+      "señalesAutomaticas": [],
+      "señalesInteraccion": [],
+      "nivelRiesgo": "bajo",
+      "requiereROS": false,
+      "decisionCorrecta": "APROBAR",
+      "normativaAplicable": "Circular UAF N°62 — Procedimiento estándar",
+      "explicacion": "Empresa de transporte con documentación completa, actividad verificada y perfil transaccional coherente con facturación comercial. Sin señales de alerta.",
+      "transacciones": [
+        {
+          "fecha": "2026-06-01",
+          "descripcion": "PAGO FACTURA CLIENTE A",
+          "monto": 3200000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "EMPRESA LOGÍSTICA S.A.",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-05",
+          "descripcion": "PAGO FACTURA CLIENTE B",
+          "monto": 2800000,
+          "tipo": "TRANSFERENCIA_RECIBIDA",
+          "origen": "DISTRIBUIDORA CENTRAL LTDA.",
+          "destino": "CLIENTE"
+        },
+        {
+          "fecha": "2026-06-10",
+          "descripcion": "PAGO COMBUSTIBLE",
+          "monto": -1500000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "COPEC"
+        },
+        {
+          "fecha": "2026-06-12",
+          "descripcion": "PAGO SUELDOS",
+          "monto": -3000000,
+          "tipo": "TRANSFERENCIA_ENVIADA",
+          "origen": "CLIENTE",
+          "destino": "NÓMINA EMPLEADOS"
+        }
+      ],
+      "estructuraSocietaria": [
+        {
+          "nombre": "Patricio Riquelme",
+          "rut": "13.555.666-7",
+          "porcentajeParticipacion": 100.0,
+          "esPEP": false
+        }
+      ],
+      "notasJuniorEscalado": ""
     }
   ]
 }

@@ -31,6 +31,18 @@ public class UIManager : MonoBehaviour
     private Label labelTiempo;
     private Label labelPuntaje;
     private Label labelEstado;
+    private Label labelNivel;
+
+    // Alerta de ascenso de nivel
+    private VisualElement alertaNivel;
+    private Label alertaTitulo;
+    private Label alertaSubtitulo;
+    private Label alertaInstruccion;
+    private Button btnAlertaContinuar;
+
+    // Alerta de coordinación
+    private VisualElement alertaCoordinacion;
+    private Button btnAlertaCoordinacionEntendido;
 
     // Expediente
     private Label casoId;
@@ -77,13 +89,22 @@ public class UIManager : MonoBehaviour
     private VisualElement panelRosUaf, rosDropzone;
     private Label labelBitacoraJunior, rosDropzoneLabel, rosLeySeleccionada;
     private Button btnLey19913, btnLey20393, btnLey21521, btnRosCancelar, btnRosEnviar;
-    private ScrollView transaccionesScroll, sancionesUboContainer;
+    private ScrollView transaccionesScroll, sancionesUboContainer, rosTransaccionesScroll;
     private string leySeleccionadaUaf = "";
     private string evidenciaAdjuntaRos = "";
+    private Label hintRosDrag;
+    private bool haRevisadoAmbosEscritorios = false;
 
+    // Alerta de Ley
+    private VisualElement alertaLey;
+    private Label alertaLeyTitulo;
+    private Label alertaLeySubtitulo;
+    private Label alertaLeyDescripcion;
+    private Button btnAlertaLeyCancelar;
+    private Button btnAlertaLeyConfirmar;
     // Estado
     private int turnoActual = 1;
-    private int turnoTotal = 5;
+    private int turnoTotal = 12;
     private int puntaje = 0;
     private float tiempoRestante = 60f;
     private bool juegoActivo = true;
@@ -120,6 +141,7 @@ public class UIManager : MonoBehaviour
 
     private void AlCambiarRol(RoleManager.RolAnalista nuevoRol)
     {
+        haRevisadoAmbosEscritorios = true;
         ConfigurarUIPorNivelYRol();
     }
 
@@ -129,6 +151,15 @@ public class UIManager : MonoBehaviour
         
         var nivel = RoleManager.Instance.nivelActual;
         var rol = RoleManager.Instance.rolActivo;
+
+        // Mostrar/ocultar el hint de arrastrar transacción para ROS
+        if (hintRosDrag != null)
+        {
+            if (nivel == RoleManager.NivelJuego.Nivel3)
+                hintRosDrag.RemoveFromClassList("hidden");
+            else
+                hintRosDrag.AddToClassList("hidden");
+        }
 
         // Resetear visibilidad de pestañas
         if (tabIdentidad != null) tabIdentidad.RemoveFromClassList("hidden");
@@ -226,6 +257,24 @@ public class UIManager : MonoBehaviour
         labelTiempo   = root.Q<Label>("label-tiempo");
         labelPuntaje  = root.Q<Label>("label-puntaje");
         labelEstado   = root.Q<Label>("label-estado");
+        labelNivel    = root.Q<Label>("label-nivel");
+
+        // Alerta de ascenso
+        alertaNivel       = root.Q<VisualElement>("alerta-nivel");
+        alertaTitulo      = root.Q<Label>("alerta-nivel-titulo");
+        alertaSubtitulo   = root.Q<Label>("alerta-nivel-subtitulo");
+        alertaInstruccion = root.Q<Label>("alerta-nivel-instruccion");
+        btnAlertaContinuar = root.Q<Button>("btn-alerta-continuar");
+        if (btnAlertaContinuar != null)
+            btnAlertaContinuar.clicked += CerrarAlertaNivel;
+
+        // Alerta de coordinación
+        alertaCoordinacion = root.Q<VisualElement>("alerta-coordinacion");
+        btnAlertaCoordinacionEntendido = root.Q<Button>("btn-alerta-coordinacion-entendido");
+        if (btnAlertaCoordinacionEntendido != null)
+            btnAlertaCoordinacionEntendido.clicked += CerrarAlertaCoordinacion;
+
+        ActualizarLabelNivel();
 
         panelFeedback = root.Q<VisualElement>("panel-feedback");
         panelFeedback.RegisterCallback<MouseEnterEvent>(e => mouseEnUI = true);
@@ -307,6 +356,19 @@ public class UIManager : MonoBehaviour
         transaccionesScroll  = root.Q<ScrollView>("transacciones-scroll");
         sancionesUboContainer = root.Q<ScrollView>("sanciones-ubo-container");
         labelBitacoraJunior  = root.Q<Label>("label-bitacora-junior");
+        hintRosDrag          = root.Q<Label>("hint-ros-drag");
+        rosTransaccionesScroll = root.Q<ScrollView>("ros-transacciones-scroll");
+
+        // Alerta de Ley
+        alertaLey            = root.Q<VisualElement>("alerta-ley");
+        alertaLeyTitulo      = root.Q<Label>("alerta-ley-titulo");
+        alertaLeySubtitulo   = root.Q<Label>("alerta-ley-subtitulo");
+        alertaLeyDescripcion = root.Q<Label>("alerta-ley-descripcion");
+        btnAlertaLeyCancelar = root.Q<Button>("btn-alerta-ley-cancelar");
+        btnAlertaLeyConfirmar = root.Q<Button>("btn-alerta-ley-confirmar");
+
+        if (btnAlertaLeyCancelar != null)
+            btnAlertaLeyCancelar.clicked += CerrarAlertaLey;
         
         ConfigurarBotonLeyes();
     }
@@ -471,6 +533,18 @@ public class UIManager : MonoBehaviour
     {
         if (!juegoActivo) return;
 
+        // En Nivel 2, es obligatorio coordinar consultando ambos escritorios (presionando W) antes de decidir
+        if (RoleManager.Instance != null && RoleManager.Instance.nivelActual == RoleManager.NivelJuego.Nivel2 && !haRevisadoAmbosEscritorios)
+        {
+            if (alertaCoordinacion != null)
+            {
+                alertaCoordinacion.RemoveFromClassList("hidden");
+                alertaCoordinacion.style.opacity = 1f;
+            }
+            AudioManager.Instance?.SFXRechazar();
+            return;
+        }
+
         // Interceptar si es Nivel 3 y es un rechazo para exigir el formulario de ROS
         if (RoleManager.Instance != null && RoleManager.Instance.nivelActual == RoleManager.NivelJuego.Nivel3 && decision == "RECHAZADO")
         {
@@ -503,6 +577,9 @@ public class UIManager : MonoBehaviour
             OnMultiplicadorChanged?.Invoke(rachaCorrectas);
             
             AudioManager.Instance?.SFXAprobar();
+
+            // Verificar ascenso de nivel si se logra racha de 3
+            ChequearProgresoNivel();
         }
         else
         {
@@ -593,6 +670,9 @@ public class UIManager : MonoBehaviour
     {
         juegoActivo = false;
         
+        // Guardar puntaje antes de mostrar panel
+        GameManager.Instance?.SetPuntajeFinal(puntaje);
+        
         // Mostrar panel de resultado
         var root = uiDocument.rootVisualElement;
         var panelResultado = root.Q<VisualElement>("panel-resultado-jornada");
@@ -600,7 +680,7 @@ public class UIManager : MonoBehaviour
         if (panelResultado != null) {
             // Configurar contenido
             var titulo = panelResultado.Q<Label>("resultado-titulo");
-            titulo.text = victoria ? "✓ JORNADA EXITOSA" : "✗ JORNADA FALLIDA";
+            titulo.text = victoria ? "🌟 JORNADA EXITOSA" : "💔 JORNADA FALLIDA";
             titulo.style.color = victoria 
                 ? new Color(0.2f, 0.9f, 0.4f) 
                 : new Color(0.9f, 0.3f, 0.3f);
@@ -611,16 +691,22 @@ public class UIManager : MonoBehaviour
             
             // Botones
             panelResultado.Q<Button>("btn-reintentar").clicked += () => GameManager.Instance?.Reiniciar();
-            panelResultado.Q<Button>("btn-menu").clicked += () => GameManager.Instance?.IrAInicio();
+            panelResultado.Q<Button>("btn-menu").clicked += () => GameManager.Instance?.IrAResultados();
             
             // Mostrar
             panelResultado.RemoveFromClassList("hidden");
         }
         
-        // Guardar puntaje
-        GameManager.Instance?.SetPuntajeFinal(puntaje);
-        
         OnJornadaTerminada?.Invoke(victoria);
+        
+        // Auto-transición a SceneResultados después de 8 segundos
+        StartCoroutine(TransicionAResultados(8f));
+    }
+
+    System.Collections.IEnumerator TransicionAResultados(float espera)
+    {
+        yield return new WaitForSeconds(espera);
+        GameManager.Instance?.IrAResultados();
     }
 
     void IrAResultados()
@@ -647,6 +733,7 @@ public class UIManager : MonoBehaviour
 
     public void CargarCaso(CasoData caso)
     {
+        haRevisadoAmbosEscritorios = false;
         casoId.text = caso.id;
         casoTipo.text = $"{caso.tipo} — Onboarding";
         casoPrioridad.text = $"⚠ {caso.prioridad}";
@@ -1127,25 +1214,12 @@ public class UIManager : MonoBehaviour
 
     void ConfigurarBotonLeyes()
     {
-        if (btnLey19913 != null) btnLey19913.clicked += () => SeleccionarLey("Ley 19.913", btnLey19913);
-        if (btnLey20393 != null) btnLey20393.clicked += () => SeleccionarLey("Ley 20.393", btnLey20393);
-        if (btnLey21521 != null) btnLey21521.clicked += () => SeleccionarLey("Ley 21.521", btnLey21521);
+        if (btnLey19913 != null) btnLey19913.clicked += () => MostrarDetalleLey("Ley 19.913", btnLey19913);
+        if (btnLey20393 != null) btnLey20393.clicked += () => MostrarDetalleLey("Ley 20.393", btnLey20393);
+        if (btnLey21521 != null) btnLey21521.clicked += () => MostrarDetalleLey("Ley 21.521", btnLey21521);
         
         if (btnRosCancelar != null) btnRosCancelar.clicked += CerrarFormularioROS;
         if (btnRosEnviar != null) btnRosEnviar.clicked += EnviarROS;
-        
-        // Clic en dropzone simula adjuntar evidencia rápida del expediente si no se ha clickeado una transacción
-        if (rosDropzone != null) {
-            rosDropzone.RegisterCallback<ClickEvent>(e => {
-                if (string.IsNullOrEmpty(evidenciaAdjuntaRos)) {
-                    evidenciaAdjuntaRos = "Transacción sospechosa de $13.500.000 a Shell Corp";
-                    if (rosDropzoneLabel != null) {
-                        rosDropzoneLabel.text = "✓ Adjunto: " + evidenciaAdjuntaRos;
-                        rosDropzoneLabel.style.color = new Color(0.2f, 0.9f, 0.4f);
-                    }
-                }
-            });
-        }
     }
     
     void SeleccionarLey(string ley, Button boton)
@@ -1174,7 +1248,7 @@ public class UIManager : MonoBehaviour
             
             if (rosDropzoneLabel != null)
             {
-                rosDropzoneLabel.text = "Arrastra una transacción sospechosa aquí o haz clic";
+                rosDropzoneLabel.text = "Selecciona una transacción de la lista anterior";
                 rosDropzoneLabel.style.color = new Color(1f, 0.5f, 0.5f);
             }
             if (rosLeySeleccionada != null)
@@ -1187,6 +1261,8 @@ public class UIManager : MonoBehaviour
             {
                 if (btn != null) btn.RemoveFromClassList("btn-ley-selected");
             }
+
+            PoblarTransaccionesInternasROS();
         }
     }
 
@@ -1216,7 +1292,7 @@ public class UIManager : MonoBehaviour
             Debug.LogError("[ROS] Debes adjuntar evidencia transaccional.");
             if (rosDropzoneLabel != null)
             {
-                rosDropzoneLabel.text = "⚠️ DEBES ADJUNTAR EVIDENCIA (Haz clic en una transacción)";
+                rosDropzoneLabel.text = "⚠️ DEBES SELECCIONAR UNA TRANSACCIÓN";
                 rosDropzoneLabel.style.color = Color.red;
             }
             return;
@@ -1243,7 +1319,18 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        bool todoCorrecto = decisionCorrecta && leyCorrecta;
+        // Validar si seleccionó la transacción sospechosa correcta del caso
+        bool evidenciaCorrecta = false;
+        if (caso != null)
+        {
+            if (string.IsNullOrEmpty(caso.transaccionSospechosaCorrecta) || 
+                evidenciaAdjuntaRos.ToLower().Contains(caso.transaccionSospechosaCorrecta.ToLower()))
+            {
+                evidenciaCorrecta = true;
+            }
+        }
+
+        bool todoCorrecto = decisionCorrecta && leyCorrecta && evidenciaCorrecta;
 
         if (todoCorrecto)
         {
@@ -1258,6 +1345,9 @@ public class UIManager : MonoBehaviour
             OnMultiplicadorChanged?.Invoke(rachaCorrectas);
             
             AudioManager.Instance?.SFXAprobar();
+
+            // Verificar ascenso de nivel si se logra racha de 3
+            ChequearProgresoNivel();
         }
         else
         {
@@ -1288,15 +1378,281 @@ public class UIManager : MonoBehaviour
                 feedbackExplicacion.text = "El rechazo del caso era correcto, pero fundamentaste el ROS con una ley inaplicable. Debes estudiar la competencia de la Ley 19.913 (UAF), Ley 20.393 (Personas Jurídicas) y Ley 21.521 (Fintech).";
                 panelFeedback.RemoveFromClassList("hidden");
             }
+            else if (!evidenciaCorrecta)
+            {
+                feedbackTitulo.text = "EVIDENCIA ROS INCORRECTA";
+                feedbackTitulo.style.color = new UnityEngine.Color(0.9f, 0.3f, 0.3f);
+                feedbackDecision.text = $"Evidencia seleccionada no corresponde a la operación inusual del caso.";
+                feedbackNormativa.text = caso.normativaAplicable;
+                feedbackExplicacion.text = $"El rechazo y fundamento legal eran correctos, pero adjuntaste una transacción que no justifica el reporte.\n\nLa transacción sospechosa correcta del caso debe relacionarse con: \"{caso.transaccionSospechosaCorrecta}\".";
+                panelFeedback.RemoveFromClassList("hidden");
+            }
             else
             {
                 feedbackTitulo.text = "ROS PERFECTO (CUMPLIMIENTO EXITOSO)";
                 feedbackTitulo.style.color = new UnityEngine.Color(0.2f, 0.8f, 0.4f);
                 feedbackDecision.text = $"Fundamento: {leySeleccionadaUaf} | Evidencia: {evidenciaAdjuntaRos}";
                 feedbackNormativa.text = caso.normativaAplicable;
-                feedbackExplicacion.text = $"¡Excelente! Rechazaste el caso y fundamentaste correctamente el ROS bajo la {leySeleccionadaUaf}. Evidencia adjunta registrada en el expediente de la UAF.";
+                feedbackExplicacion.text = $"¡Excelente! Rechazaste el caso y fundamentaste correctamente el ROS bajo la {leySeleccionadaUaf} adjuntando la transacción sospechosa correcta. Evidencia adjunta registrada en el expediente de la UAF.";
                 panelFeedback.RemoveFromClassList("hidden");
             }
+        }
+    }
+
+    void ChequearProgresoNivel()
+    {
+        if (RoleManager.Instance == null) return;
+
+        var nivelActual = RoleManager.Instance.nivelActual;
+
+        // Si el analista logra una racha de 3 casos correctos seguidos en Nivel 1, asciende a Nivel 2
+        if (nivelActual == RoleManager.NivelJuego.Nivel1 && rachaCorrectas >= 3)
+        {
+            Debug.Log("[Progreso] ¡Racha de 3 correcta en Nivel 1! Ascendiendo a Nivel 2.");
+            
+            RoleManager.Instance.ConfigurarNivel(RoleManager.NivelJuego.Nivel2);
+            
+            rachaCorrectas = 0;
+            multiplicador = 1.0f;
+            OnMultiplicadorChanged?.Invoke(0);
+            
+            ActualizarLabelNivel();
+            MostrarAlertaNivel(
+                "⬆ ASCENSO",
+                "Nivel 2 — Analista KYC / AML",
+                "Los próximos casos requieren información de tu compañero (Analista 2).\nPresiona la tecla W para cambiar a su vista y consultar los datos de Back-Office."
+            );
+        }
+        // Si logra una racha de 3 en Nivel 2, asciende a Nivel 3 (Supervisor)
+        else if (nivelActual == RoleManager.NivelJuego.Nivel2 && rachaCorrectas >= 3)
+        {
+            Debug.Log("[Progreso] ¡Racha de 3 correcta en Nivel 2! Ascendiendo a Supervisor (Nivel 3).");
+            
+            RoleManager.Instance.ConfigurarNivel(RoleManager.NivelJuego.Nivel3);
+            
+            rachaCorrectas = 0;
+            multiplicador = 1.0f;
+            OnMultiplicadorChanged?.Invoke(0);
+            
+            ActualizarLabelNivel();
+            MostrarAlertaNivel(
+                "⭐ SUPERVISOR",
+                "Nivel 3 — Supervisor Corporativo",
+                "Como supervisor debes evaluar casos escalados por los analistas.\nTienes 90 segundos por caso y debes fundamentar los rechazos con un Reporte de Operación Sospechosa (ROS)."
+            );
+        }
+    }
+
+    void ActualizarLabelNivel()
+    {
+        if (labelNivel == null || RoleManager.Instance == null) return;
+
+        string texto = RoleManager.Instance.nivelActual switch
+        {
+            RoleManager.NivelJuego.Nivel1 => "NIVEL 1 — ANALISTA KYC",
+            RoleManager.NivelJuego.Nivel2 => "NIVEL 2 — KYC / AML",
+            RoleManager.NivelJuego.Nivel3 => "NIVEL 3 — SUPERVISOR",
+            _ => "NIVEL 1 — ANALISTA KYC"
+        };
+        labelNivel.text = texto;
+    }
+
+    void MostrarAlertaNivel(string titulo, string subtitulo, string instruccion = "")
+    {
+        if (alertaNivel == null) return;
+
+        if (alertaTitulo != null) alertaTitulo.text = titulo;
+        if (alertaSubtitulo != null) alertaSubtitulo.text = subtitulo;
+        if (alertaInstruccion != null) alertaInstruccion.text = instruccion;
+
+        alertaNivel.RemoveFromClassList("hidden");
+        alertaNivel.style.opacity = 1f;
+    }
+
+    void CerrarAlertaNivel()
+    {
+        if (alertaNivel == null) return;
+        StartCoroutine(OcultarAlertaNivel());
+    }
+
+    System.Collections.IEnumerator OcultarAlertaNivel()
+    {
+        float fadeTime = 0.4f;
+        float elapsed = 0f;
+        while (elapsed < fadeTime)
+        {
+            elapsed += Time.deltaTime;
+            if (alertaNivel != null)
+                alertaNivel.style.opacity = 1f - (elapsed / fadeTime);
+            yield return null;
+        }
+
+        if (alertaNivel != null)
+        {
+            alertaNivel.AddToClassList("hidden");
+            alertaNivel.style.opacity = 1f;
+        }
+    }
+
+    void CerrarAlertaCoordinacion()
+    {
+        if (alertaCoordinacion == null) return;
+        StartCoroutine(OcultarAlertaCoordinacion());
+    }
+
+    System.Collections.IEnumerator OcultarAlertaCoordinacion()
+    {
+        float fadeTime = 0.3f;
+        float elapsed = 0f;
+        while (elapsed < fadeTime)
+        {
+            elapsed += Time.deltaTime;
+            if (alertaCoordinacion != null)
+                alertaCoordinacion.style.opacity = 1f - (elapsed / fadeTime);
+            yield return null;
+        }
+
+        if (alertaCoordinacion != null)
+        {
+            alertaCoordinacion.AddToClassList("hidden");
+            alertaCoordinacion.style.opacity = 1f;
+        }
+    }
+
+    void MostrarDetalleLey(string ley, Button boton)
+    {
+        if (alertaLey == null) return;
+
+        if (alertaLeyTitulo != null) alertaLeyTitulo.text = $"⚠️ {ley.ToUpper()}";
+        
+        string desc = ley switch
+        {
+            "Ley 19.913" => "Regula la prevención y sanción del lavado de activos y financiamiento del terrorismo. Obliga a reportar operaciones sospechosas (ROS) a la UAF.\n\nCompetente para transacciones sospechosas sin justificación económica coherente (smurfing, fondos de origen desconocido, transferencias offshore).",
+            "Ley 20.393" => "Establece la responsabilidad penal de las personas jurídicas (empresas) en los delitos de lavado de activos, financiamiento del terrorismo y cohecho.\n\nCompetente cuando el cliente es una empresa (SpA, Ltda., S.A.) que actúa como fachada o instrumento para encubrir fondos de origen ilícito.",
+            "Ley 21.521" => "Regula los servicios de tecnología financiera (Ley Fintech), incluyendo plataformas de financiamiento colectivo, custodia y transacciones con criptomonedas.\n\nCompetente cuando las operaciones sospechosas involucran transacciones con criptoactivos o billeteras digitales reguladas por esta ley.",
+            _ => "Descripción de la ley seleccionada."
+        };
+
+        if (alertaLeyDescripcion != null) alertaLeyDescripcion.text = desc;
+
+        // Registrar acción de confirmar
+        if (btnAlertaLeyConfirmar != null)
+        {
+            btnAlertaLeyConfirmar.clickable = new Clickable(() => {
+                SeleccionarLey(ley, boton);
+                CerrarAlertaLey();
+            });
+        }
+
+        alertaLey.RemoveFromClassList("hidden");
+        alertaLey.style.opacity = 1f;
+    }
+
+    void CerrarAlertaLey()
+    {
+        if (alertaLey == null) return;
+        StartCoroutine(OcultarAlertaLey());
+    }
+
+    System.Collections.IEnumerator OcultarAlertaLey()
+    {
+        float fadeTime = 0.3f;
+        float elapsed = 0f;
+        while (elapsed < fadeTime)
+        {
+            elapsed += Time.deltaTime;
+            if (alertaLey != null)
+                alertaLey.style.opacity = 1f - (elapsed / fadeTime);
+            yield return null;
+        }
+
+        if (alertaLey != null)
+        {
+            alertaLey.AddToClassList("hidden");
+            alertaLey.style.opacity = 1f;
+        }
+    }
+
+    void PoblarTransaccionesInternasROS()
+    {
+        if (rosTransaccionesScroll == null) return;
+        rosTransaccionesScroll.Clear();
+
+        var caso = caseManager?.CasoActual;
+        if (caso == null || caso.transacciones == null) return;
+
+        foreach (var tx in caso.transacciones)
+        {
+            VisualElement row = new VisualElement();
+            row.style.flexDirection = FlexDirection.Row;
+            row.style.justifyContent = Justify.SpaceBetween;
+            row.style.paddingTop = 6;
+            row.style.paddingBottom = 6;
+            row.style.paddingLeft = 8;
+            row.style.paddingRight = 8;
+            row.style.borderBottomWidth = 1;
+            row.style.borderBottomColor = new Color(1, 1, 1, 0.05f);
+            row.style.borderTopLeftRadius = 4f;
+            row.style.borderTopRightRadius = 4f;
+            row.style.borderBottomLeftRadius = 4f;
+            row.style.borderBottomRightRadius = 4f;
+            row.style.marginBottom = 2;
+            
+            Label lblFecha = new Label(tx.fecha);
+            lblFecha.style.fontSize = 11;
+            lblFecha.style.color = new Color(0.6f, 0.6f, 0.6f);
+            row.Add(lblFecha);
+            
+            Label lblDesc = new Label(tx.descripcion);
+            lblDesc.style.fontSize = 11;
+            lblDesc.style.color = Color.white;
+            lblDesc.style.flexGrow = 1;
+            lblDesc.style.marginLeft = 10;
+            row.Add(lblDesc);
+            
+            Label lblMonto = new Label((tx.monto > 0 ? "+" : "") + tx.monto.ToString("N0") + " CLP");
+            lblMonto.style.fontSize = 11;
+            lblMonto.style.color = tx.monto < 0 ? new Color(1.0f, 0.3f, 0.3f) : new Color(0.2f, 0.8f, 0.4f);
+            row.Add(lblMonto);
+
+            // Click listener to select
+            row.RegisterCallback<ClickEvent>(evt => {
+                evidenciaAdjuntaRos = $"{tx.descripcion} ({tx.monto:N0} CLP)";
+                if (rosDropzoneLabel != null)
+                {
+                    rosDropzoneLabel.text = $"✓ Seleccionado: {tx.descripcion} ({tx.monto:N0} CLP)";
+                    rosDropzoneLabel.style.color = new Color(0.2f, 0.9f, 0.4f);
+                }
+                
+                // Limpiar resaltado de otros
+                foreach (var child in rosTransaccionesScroll.Children())
+                {
+                    child.style.backgroundColor = StyleKeyword.Null;
+                    child.style.borderLeftWidth = StyleKeyword.Null;
+                    child.style.borderRightWidth = StyleKeyword.Null;
+                    child.style.borderTopWidth = StyleKeyword.Null;
+                    child.style.borderBottomWidth = StyleKeyword.Null;
+                    child.style.borderLeftColor = StyleKeyword.Null;
+                    child.style.borderRightColor = StyleKeyword.Null;
+                    child.style.borderTopColor = StyleKeyword.Null;
+                    child.style.borderBottomColor = StyleKeyword.Null;
+                }
+                
+                // Resaltar el seleccionado
+                row.style.backgroundColor = new Color(0f, 0.82f, 0.62f, 0.15f);
+                row.style.borderLeftWidth = 1f;
+                row.style.borderRightWidth = 1f;
+                row.style.borderTopWidth = 1f;
+                row.style.borderBottomWidth = 1f;
+                row.style.borderLeftColor = new Color(0f, 0.82f, 0.62f, 0.5f);
+                row.style.borderRightColor = new Color(0f, 0.82f, 0.62f, 0.5f);
+                row.style.borderTopColor = new Color(0f, 0.82f, 0.62f, 0.5f);
+                row.style.borderBottomColor = new Color(0f, 0.82f, 0.62f, 0.5f);
+                
+                Debug.Log($"[ROS] Transacción seleccionada como evidencia: {evidenciaAdjuntaRos}");
+            });
+
+            rosTransaccionesScroll.Add(row);
         }
     }
 }

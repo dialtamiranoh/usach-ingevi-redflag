@@ -10,7 +10,7 @@ public class RoleManager : MonoBehaviour
     public enum RolAnalista { Analista_KYC, Analista_AML }
 
     [Header("Configuración de Progresión")]
-    public NivelJuego nivelActual = NivelJuego.Nivel2; // Por defecto en Nivel 2 para pruebas
+    public NivelJuego nivelActual = NivelJuego.Nivel1;
     public RolAnalista rolActivo = RolAnalista.Analista_KYC;
 
     [Header("Guía Visual Implícita (Nivel 2)")]
@@ -28,12 +28,13 @@ public class RoleManager : MonoBehaviour
     {
         if (FindFirstObjectByType<RoleManager>() == null)
         {
-            GameObject go = new GameObject("RoleManager_AutoCreated");
-            go.AddComponent<RoleManager>();
-            // No llamar a DontDestroyOnLoad para que se limpie al cambiar de escena si es necesario, 
-            // pero lo dejamos persistente si GameManager también lo es.
-            DontDestroyOnLoad(go);
-            Debug.Log("[RoleManager] Spawneado automáticamente en la escena.");
+            // Solo crear si estamos en la escena de juego (MainScene)
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainScene")
+            {
+                GameObject go = new GameObject("RoleManager_AutoCreated");
+                go.AddComponent<RoleManager>();
+                Debug.Log("[RoleManager] Spawneado automáticamente en la escena MainScene.");
+            }
         }
     }
 
@@ -47,6 +48,14 @@ public class RoleManager : MonoBehaviour
         {
             Destroy(gameObject);
             return;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 

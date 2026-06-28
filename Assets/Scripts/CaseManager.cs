@@ -75,6 +75,7 @@ public class CasoData
     public List<TransaccionData> transacciones;
     public List<SocioData> estructuraSocietaria;
     public string notasJuniorEscalado;
+    public string transaccionSospechosaCorrecta;
 }
 
 [System.Serializable]
