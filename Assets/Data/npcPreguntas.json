@@ -1,0 +1,134 @@
+{
+  "preguntas": [
+    {
+      "id": 1,
+      "pregunta": "El gerente te pide que apruebes un cliente sin verificar su domicilio. ¿Qué haces?",
+      "opciones": [
+        "Lo apruebo igual, el gerente manda",
+        "Rechazo y escalo: no se puede aprobar sin domicilio verificado",
+        "Lo escalo sin documentar nada",
+        "Apruebo condicionado a revisión posterior"
+      ],
+      "correcta": 1,
+      "normativa": "Circular UAF N°62",
+      "puntaje": 150
+    },
+    {
+      "id": 2,
+      "pregunta": "¿Qué es un PEP (Persona Expuesta Políticamente)?",
+      "opciones": [
+        "Un cliente con alto patrimonio declarado",
+        "Una persona que ocupa o ha ocupado funciones públicas prominentes",
+        "Un cliente extranjero sin cuenta en Chile",
+        "Un funcionario bancario con poder de firma"
+      ],
+      "correcta": 1,
+      "normativa": "Ley N°19.913",
+      "puntaje": 150
+    },
+    {
+      "id": 3,
+      "pregunta": "¿Qué entidad en Chile recibe los Reportes de Operación Sospechosa (ROS)?",
+      "opciones": [
+        "Banco Central de Chile",
+        "Comisión para el Mercado Financiero (CMF)",
+        "Unidad de Análisis Financiero (UAF)",
+        "Servicio de Impuestos Internos (SII)"
+      ],
+      "correcta": 2,
+      "normativa": "Ley N°19.913 Art. 3",
+      "puntaje": 150
+    },
+    {
+      "id": 4,
+      "pregunta": "Un cliente tiene 5 depósitos de $1.900.000 en el mismo día. ¿Qué técnica de lavado sugiere esto?",
+      "opciones": [
+        "Layering (colocación en capas)",
+        "Pitufeo o smurfing",
+        "Integración de fondos",
+        "Facturas infladas"
+      ],
+      "correcta": 1,
+      "normativa": "Circular UAF N°62",
+      "puntaje": 200
+    },
+    {
+      "id": 5,
+      "pregunta": "¿Cuál es el plazo máximo para reportar una operación sospechosa a la UAF?",
+      "opciones": [
+        "24 horas desde la detección",
+        "3 días hábiles",
+        "No hay plazo, se reporta cuando se confirma",
+        "30 días corridos"
+      ],
+      "correcta": 0,
+      "normativa": "Circular UAF N°62 Art. 8",
+      "puntaje": 150
+    },
+    {
+      "id": 6,
+      "pregunta": "La Ley 20.393 establece responsabilidad penal para:",
+      "opciones": [
+        "Solo personas naturales mayores de 18 años",
+        "Personas jurídicas (empresas) en delitos de lavado y cohecho",
+        "Solo directivos de bancos y AFPs",
+        "Extranjeros con cuentas en paraísos fiscales"
+      ],
+      "correcta": 1,
+      "normativa": "Ley N°20.393",
+      "puntaje": 150
+    },
+    {
+      "id": 7,
+      "pregunta": "¿Cuándo aplica la Ley Fintech (Ley 21.521) en un caso AML?",
+      "opciones": [
+        "Cuando el cliente usa tarjeta de crédito internacional",
+        "Cuando las transacciones involucran criptoactivos o billeteras digitales",
+        "Cuando el monto supera los $10.000.000 CLP",
+        "Cuando el cliente es persona jurídica extranjera"
+      ],
+      "correcta": 1,
+      "normativa": "Ley N°21.521",
+      "puntaje": 150
+    },
+    {
+      "id": 8,
+      "pregunta": "El gerente te ofrece un bono si apruebas un caso que tú considerarías escalar. ¿Qué haces?",
+      "opciones": [
+        "Acepto el bono y apruebo",
+        "Rechazo el bono, escalo el caso y reporto la situación al oficial de cumplimiento",
+        "Apruebo pero dejo nota interna",
+        "Le pido más información antes de decidir y acepto el bono"
+      ],
+      "correcta": 1,
+      "normativa": "Ley N°20.393 (Cohecho)",
+      "puntaje": 200
+    },
+    {
+      "id": 9,
+      "pregunta": "¿Qué significa KYC en banca?",
+      "opciones": [
+        "Know Your Customer — conoce a tu cliente",
+        "Keep Your Cash — protocolo de caja fuerte",
+        "Key Year Check — revisión anual obligatoria",
+        "Korean Yuan Credit — moneda asiática de referencia"
+      ],
+      "correcta": 0,
+      "normativa": "Circular UAF N°62",
+      "puntaje": 100
+    },
+    {
+      "id": 10,
+      "pregunta": "Un cliente afirma ser profesional independiente pero sus transacciones no coinciden con esa actividad. ¿Cuál es la acción correcta?",
+      "opciones": [
+        "Aprobar: las declaraciones del cliente son suficientes",
+        "Escalar: existe discrepancia entre actividad declarada y transacciones",
+        "Rechazar directamente sin mayor análisis",
+        "Pedir una segunda opinión al gerente de sucursal"
+      ],
+      "correcta": 1,
+      "normativa": "Circular UAF N°62 Art. 5",
+      "puntaje": 150
+    }
+  ]
+}

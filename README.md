@@ -190,3 +190,34 @@ git push -u origin nombre-de-rama
 - Ley NÂ°20.393 â€” Responsabilidad penal de personas jurÃ­dicas
 - Ley NÂ°21.521 â€” Ley Fintech
 - Circular UAF NÂ°62 (2025) â€” Procedimientos AML actualizados
+
+---
+
+## Gerente de Sucursal — NPC (LAB 5)
+
+### Comportamiento
+El **Gerente de Sucursal** es un NPC autónomo que merodea la oficina e interrumpe al analista durante la jornada. Combina rol de **jefe corrupto** (presiona con preguntas) y **colega espía** (si lo ignoras, penaliza revisando el expediente).
+
+### Estados FSM
+| Estado | Descripción |
+|---|---|
+| Patrol | Camina por la oficina entre waypoints aleatorios |
+| Approach | Detecta al jugador activo y se dirige al escritorio |
+| Interact | Lanza pregunta de normativa con timer de 15 segundos |
+
+### Parámetros configurables desde Inspector
+| Parámetro | Descripción | Default |
+|---|---|---|
+| angoInteraccion | Distancia al escritorio para activar Interact | 1.5m |
+| intervaloNivel1 | Segundos entre visitas en Nivel 1 | 40s |
+| intervaloNivel2 | Segundos entre visitas en Nivel 2 | 25s |
+| intervaloNivel3 | Segundos entre visitas en Nivel 3 | 15s |
+| 	iempoRespuesta | Segundos para responder la pregunta | 15s |
+| penalizacionPuntos | Puntos restados al fallar | 100 |
+
+### Cómo interactuar
+- Cuando el Gerente aparezca en pantalla, responde la pregunta de normativa antes de que se agote el timer.
+- **Respuesta correcta**: +150 pts, el gerente pierde 1 HP (3 golpes = retirado).
+- **Respuesta incorrecta o timeout**: -100 pts y racha reseteada. El gerente 'espía' el expediente.
+- Al acumular 3 respuestas correctas al mismo gerente: **Toast HUD** 'Gerente retirado ??'.
+

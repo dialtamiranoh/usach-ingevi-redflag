@@ -115,6 +115,10 @@ public class UIManager : MonoBehaviour
     private float multiplicador = 1.0f;
     private int rachaMaxima = 0;
 
+    // Gerente de Sucursal NPC
+    private int gerentesRetirados = 0;
+    private Label labelGerenteContador; // se enlaza en InicializarElementos si existe en el UXML
+
     // Eventos para patrón Observer
     public event System.Action<int, int> OnPuntajeChanged;     // (nuevoPuntaje, delta)
     public event System.Action<int, int> OnTurnoChanged;       // (turnoActual, turnoTotal)
@@ -126,12 +130,14 @@ public class UIManager : MonoBehaviour
     {
         RoleManager.OnRolCambiado += AlCambiarRol;
         RoleManager.OnNivelCambiado += AlCambiarNivel;
+        GerenteNPC_Health.OnGerenteMuerto += OnGerenteRetirado;
     }
 
     void OnDisable()
     {
         RoleManager.OnRolCambiado -= AlCambiarRol;
         RoleManager.OnNivelCambiado -= AlCambiarNivel;
+        GerenteNPC_Health.OnGerenteMuerto -= OnGerenteRetirado;
     }
 
     private void AlCambiarNivel(RoleManager.NivelJuego nuevoNivel)
@@ -1039,6 +1045,52 @@ public class UIManager : MonoBehaviour
         if (puntaje <= 0 && turnoActual > 1 && puntos < 0) {
             TerminarJornada(false, "Demasiados errores de compliance");
         }
+    }
+
+    // ===================== GERENTE DE SUCURSAL NPC =====================
+
+    /// <summary>
+    /// Reinicia la racha y el multiplicador. Llamado por GerenteNPC_FSM cuando el jugador falla.
+    /// </summary>
+    public void ResetRacha()
+    {
+        rachaCorrectas = 0;
+        multiplicador = 1.0f;
+        OnMultiplicadorChanged?.Invoke(0);
+        Debug.Log("[UIManager] Racha reseteada por el Gerente de Sucursal.");
+    }
+
+    /// <summary>
+    /// Actualiza el label HUD de gerentes retirados (si existe en el UXML).
+    /// </summary>
+    public void ActualizarContadorGerente(int retirados)
+    {
+        gerentesRetirados = retirados;
+        if (labelGerenteContador != null)
+            labelGerenteContador.text = $"Gerente retirado: {gerentesRetirados}";
+    }
+
+    /// <summary>
+    /// Callback del evento GerenteNPC_Health.OnGerenteMuerto.
+    /// Muestra toast en HUD y actualiza contador.
+    /// </summary>
+    private void OnGerenteRetirado()
+    {
+        gerentesRetirados++;
+        ActualizarContadorGerente(gerentesRetirados);
+        MostrarToastTexto($"🚩 Gerente retirado ({gerentesRetirados})");
+        Debug.Log($"[UIManager] Gerente de Sucursal retirado. Total: {gerentesRetirados}");
+    }
+
+    /// <summary>
+    /// Muestra un toast con cualquier texto. Reutiliza los elementos visuales del toast de logros.
+    /// </summary>
+    public void MostrarToastTexto(string mensaje)
+    {
+        if (toastLogro == null || toastLogroNombre == null) return;
+        toastLogroNombre.text = mensaje;
+        toastLogro.RemoveFromClassList("hidden");
+        StartCoroutine(OcultarToastLogro(3f));
     }
 
     // ===================== LOGROS =====================

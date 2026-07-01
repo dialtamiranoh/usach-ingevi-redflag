@@ -1,9 +1,9 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CajonInteractivo : MonoBehaviour
 {
-    [Header("Animación apertura")]
+    [Header("Animaciï¿½n apertura")]
     public Transform parteCajon;
     public float distanciaApertura = 0.3f;
     public float velocidadApertura = 5f;
@@ -27,7 +27,7 @@ public class CajonInteractivo : MonoBehaviour
         posicionCerrado = parteCajon.localPosition;
         posicionAbierto = posicionCerrado + Vector3.forward * distanciaApertura;
 
-        // Obtener cámara correcta del CameraController
+        // Obtener cï¿½mara correcta del CameraController
         cam = FindObjectOfType<CameraController>().GetComponentInChildren<Camera>();
         if (cam == null) cam = Camera.main;
 
@@ -48,7 +48,7 @@ public class CajonInteractivo : MonoBehaviour
     {
 
 
-        // Raycast desde la cámara al mouse
+        // Raycast desde la cï¿½mara al mouse
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         int layerMask = ~LayerMask.GetMask("ZonaSegura");
@@ -67,7 +67,7 @@ public class CajonInteractivo : MonoBehaviour
         }
 
         bool hayObjetoArrastrado = HayObjetoArrastrado();
-        Debug.Log($"mouseEncima: {mouseEncima} | arrastrado: {hayObjetoArrastrado}");
+        // Debug.Log($\"mouseEncima...\");
 
         if (mouseEncima)
         {
@@ -89,7 +89,7 @@ public class CajonInteractivo : MonoBehaviour
             SetBrillo(Color.black);
         }
 
-        // Mover cajón
+        // Mover cajï¿½n
         Vector3 objetivo = estaAbierto ? posicionAbierto : posicionCerrado;
         parteCajon.localPosition = Vector3.Lerp(
             parteCajon.localPosition, objetivo,
