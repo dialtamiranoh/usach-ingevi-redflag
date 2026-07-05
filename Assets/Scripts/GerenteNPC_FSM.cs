@@ -250,7 +250,12 @@ public class GerenteNPC_FSM : MonoBehaviour
         Transform destino = GetEscritorioActivo();
         if (destino == null) return;
 
-        float distancia = Vector3.Distance(transform.position, destino.position);
+        // Distancia solo en el plano horizontal: los puntos de escritorio están
+        // elevados (y ≈ 0.87) y el NPC camina a nivel de piso, por lo que la
+        // distancia 3D nunca baja de ese offset y bloquearía la transición
+        Vector3 delta = destino.position - transform.position;
+        delta.y = 0f;
+        float distancia = delta.magnitude;
 
         // Transición a Interact cuando llega al escritorio
         if (!agent.pathPending && distancia <= rangoInteraccion)
@@ -267,7 +272,9 @@ public class GerenteNPC_FSM : MonoBehaviour
         Transform destino = GetEscritorioActivo();
         if (destino != null)
         {
-            Vector3 dir = (destino.position - transform.position).normalized;
+            Vector3 dir = destino.position - transform.position;
+            dir.y = 0f; // evitar que el NPC se incline hacia el punto elevado
+            dir = dir.normalized;
             if (dir != Vector3.zero)
                 transform.rotation = Quaternion.LookRotation(dir);
         }
