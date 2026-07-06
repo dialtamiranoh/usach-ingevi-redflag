@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
@@ -13,6 +14,10 @@ public class GerenteNPC_Health : MonoBehaviour
     [SerializeField] private int maxHP = 3;
     private int hpActual;
 
+    [Header("UI Barra de Vida Flotante (3D)")]
+    [Tooltip("Referencia al Slider 3D flotante sobre la cabeza del Gerente")]
+    [SerializeField] private Slider sliderVida3D;
+
     public bool EstaMuerto { get; private set; } = false;
 
     // Evento observable: la muerte del gerente notifica al HUD
@@ -21,6 +26,7 @@ public class GerenteNPC_Health : MonoBehaviour
     void Start()
     {
         hpActual = maxHP;
+        ActualizarSliderVida();
     }
 
     /// <summary>
@@ -34,6 +40,7 @@ public class GerenteNPC_Health : MonoBehaviour
         hpActual = Mathf.Max(hpActual, 0);
 
         Debug.Log($"[GerenteHealth] HP restante: {hpActual}/{maxHP}");
+        ActualizarSliderVida();
 
         if (hpActual <= 0)
             StartCoroutine(SecuenciaMuerte());
@@ -45,6 +52,11 @@ public class GerenteNPC_Health : MonoBehaviour
     private IEnumerator SecuenciaMuerte()
     {
         EstaMuerto = true;
+
+        if (sliderVida3D != null)
+        {
+            sliderVida3D.gameObject.SetActive(false); // ocultar la barra de vida al morir
+        }
 
         Animator anim = GetComponent<Animator>();
         anim?.SetTrigger("Die");
@@ -65,4 +77,12 @@ public class GerenteNPC_Health : MonoBehaviour
     /// Devuelve HP normalizado (0-1) para barras de vida opcionales.
     /// </summary>
     public float HPNormalizado() => (float)hpActual / maxHP;
+
+    private void ActualizarSliderVida()
+    {
+        if (sliderVida3D != null)
+        {
+            sliderVida3D.value = HPNormalizado();
+        }
+    }
 }
