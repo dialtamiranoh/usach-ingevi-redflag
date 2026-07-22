@@ -10,8 +10,24 @@ public class GameManager : MonoBehaviour
     public int puntajeFinal { get; private set; }
     public int recordPersonal { get; private set; }
 
-    private const string KEY_RECORD = "RecordPersonal";
     private const string KEY_RANKING = "Ranking";
+
+    /// <summary>
+    /// Normaliza un nombre de jugador para usarlo como parte de una clave de
+    /// PlayerPrefs: "Diego" y " diego " son el mismo perfil.
+    /// </summary>
+    public static string NormalizarNombre(string nombre)
+        => string.IsNullOrWhiteSpace(nombre) ? "" : nombre.Trim().ToLowerInvariant();
+
+    /// <summary>
+    /// Clave del récord personal PARA un nombre dado. El récord es por usuario:
+    /// antes se usaba la clave global "RecordPersonal" compartida entre nombres.
+    /// </summary>
+    public static string ClaveRecord(string nombre)
+    {
+        string n = NormalizarNombre(nombre);
+        return string.IsNullOrEmpty(n) ? "RecordPersonal" : $"RecordPersonal_{n}";
+    }
 
     void Awake()
     {
@@ -28,23 +44,31 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        recordPersonal = PlayerPrefs.GetInt(KEY_RECORD, 0);
+        // El récord se carga al conocer el nombre del jugador (SetNombreJugador)
+        recordPersonal = 0;
     }
 
     public void SetNombreJugador(string nombre)
     {
-        nombreJugador = nombre;
+        nombreJugador = nombre?.Trim();
+
+        // Cargar el récord de ESTE usuario
+        recordPersonal = PlayerPrefs.GetInt(ClaveRecord(nombreJugador), 0);
+
+        // Recargar los logros de ESTE usuario si el manager ya existe en la escena
+        // (comparación explícita: el operador ?. ignora el "null" de objetos destruidos de Unity)
+        if (AchievementManager.Instance != null) AchievementManager.Instance.RecargarLogros();
     }
 
     public void SetPuntajeFinal(int puntaje)
     {
         puntajeFinal = puntaje;
 
-        // Actualizar r�cord si se super�
+        // Actualizar récord del usuario activo si se superó
         if (puntaje > recordPersonal)
         {
             recordPersonal = puntaje;
-            PlayerPrefs.SetInt(KEY_RECORD, recordPersonal);
+            PlayerPrefs.SetInt(ClaveRecord(nombreJugador), recordPersonal);
             PlayerPrefs.Save();
         }
 
@@ -81,7 +105,7 @@ public class GameManager : MonoBehaviour
         return JsonUtility.FromJson<RankingData>(json) ?? new RankingData();
     }
 
-    // Navegaci�n
+    // Navegaci�n
     public void IrATutorial() => SceneManager.LoadScene("SceneTutorial");
     public void IrAlJuego() => SceneManager.LoadScene("MainScene");
     public void IrAResultados() => SceneManager.LoadScene("SceneResultados");

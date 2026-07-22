@@ -31,6 +31,7 @@ public class GerenteInteractUI : MonoBehaviour
     private Label labelPregunta;
     private Label labelNormativa;
     private Label labelTimer;
+    private Label labelResultado; // mensaje Correcto / Incorrecto / Tiempo
     private Button[] botonesOpciones;
     private VisualElement timerBar;
 
@@ -81,6 +82,7 @@ public class GerenteInteractUI : MonoBehaviour
         labelPregunta = root.Q<Label>("gerente-pregunta");
         labelNormativa = root.Q<Label>("gerente-normativa");
         labelTimer    = root.Q<Label>("gerente-timer");
+        labelResultado = root.Q<Label>("gerente-resultado");
         timerBar      = root.Q<VisualElement>("gerente-timer-bar");
 
         // Botones de opciones (4 opciones A B C D)
@@ -145,6 +147,14 @@ public class GerenteInteractUI : MonoBehaviour
         if (labelPregunta != null)  labelPregunta.text  = $"💼 GERENTE: \"{p.pregunta}\"";
         if (labelNormativa != null) labelNormativa.text = $"Normativa: {p.normativa}";
 
+        // Ocultar el resultado de la pregunta anterior
+        if (labelResultado != null)
+        {
+            labelResultado.AddToClassList("hidden");
+            labelResultado.RemoveFromClassList("gerente-resultado-correcto");
+            labelResultado.RemoveFromClassList("gerente-resultado-incorrecto");
+        }
+
         for (int i = 0; i < botonesOpciones.Length; i++)
         {
             if (botonesOpciones[i] != null && i < p.opciones.Length)
@@ -180,6 +190,12 @@ public class GerenteInteractUI : MonoBehaviour
                 botonesOpciones[i].AddToClassList("opcion-incorrecta");
         }
 
+        // Mensaje de resultado explícito (feedback del playtesting LAB 6)
+        MostrarResultado(esCorrecta
+            ? "✔ ¡CORRECTO! El gerente retrocede (−1 HP)"
+            : "✘ INCORRECTO — −100 pts y pierdes la racha",
+            esCorrecta);
+
         StartCoroutine(CerrarConDelay(esCorrecta ? cbCorrecta : cbIncorrecta, 1.5f));
     }
 
@@ -206,8 +222,18 @@ public class GerenteInteractUI : MonoBehaviour
             respondido = true;
             Debug.Log("[GerenteUI] Tiempo de respuesta agotado.");
             if (labelTimer != null) labelTimer.text = "¡TIEMPO!";
-            StartCoroutine(CerrarConDelay(cbIncorrecta, 1.0f));
+            MostrarResultado("⏰ ¡TIEMPO AGOTADO! — −100 pts y pierdes la racha", false);
+            StartCoroutine(CerrarConDelay(cbIncorrecta, 1.5f));
         }
+    }
+
+    /// <summary>Muestra el mensaje de resultado (Correcto/Incorrecto/Tiempo) en el popup.</summary>
+    private void MostrarResultado(string texto, bool correcto)
+    {
+        if (labelResultado == null) return;
+        labelResultado.text = texto;
+        labelResultado.RemoveFromClassList("hidden");
+        labelResultado.AddToClassList(correcto ? "gerente-resultado-correcto" : "gerente-resultado-incorrecto");
     }
 
     private IEnumerator CerrarConDelay(System.Action callback, float delay)

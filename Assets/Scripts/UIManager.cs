@@ -108,6 +108,7 @@ public class UIManager : MonoBehaviour
     private int puntaje = 0;
     private float tiempoRestante = 60f;
     private bool juegoActivo = true;
+    private bool tiempoPausado = false; // Ajuste 2 (playtesting LAB 6): el timer del caso se pausa durante la pregunta del Gerente
     private bool dialogoAbierto = false;
     
     // Multiplicador y Racha
@@ -234,9 +235,18 @@ public class UIManager : MonoBehaviour
         ActualizarVista(CameraController.VistaActiva.Cliente);
     }
 
+    /// <summary>Indica si la jornada sigue activa (el Gerente NPC no debe interrumpir si terminó).</summary>
+    public bool JuegoActivo => juegoActivo;
+
+    /// <summary>
+    /// Pausa/reanuda el timer del caso. Ajuste 2 del playtesting (LAB 6):
+    /// la interrupción del Gerente consumía el tiempo del caso y se percibía injusta.
+    /// </summary>
+    public void PausarTiempo(bool pausar) => tiempoPausado = pausar;
+
     void Update()
     {
-        if (!juegoActivo) return;
+        if (!juegoActivo || tiempoPausado) return;
         tiempoRestante -= Time.deltaTime;
         
         OnTiempoChanged?.Invoke(tiempoRestante);
@@ -1034,6 +1044,10 @@ public class UIManager : MonoBehaviour
 
     public void AgregarPuntaje(int puntos)
     {
+        // Ajuste 2 (playtesting LAB 6): sin penalizaciones ni puntos tras el fin de la jornada
+        // (p. ej., timeout de una pregunta del Gerente que quedó abierta al terminar).
+        if (!juegoActivo) return;
+
         int anterior = puntaje;
         puntaje += puntos;
         if (puntaje < 0) puntaje = 0;

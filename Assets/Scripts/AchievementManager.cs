@@ -22,16 +22,33 @@ public class AchievementManager : MonoBehaviour
         CargarLogros();
     }
 
+    /// <summary>
+    /// Clave PlayerPrefs del logro para el usuario activo (GameManager.nombreJugador).
+    /// Los logros son por usuario: "Logro_{nombre}_{tipo}". Sin nombre (p. ej. al
+    /// ejecutar MainScene directa en el editor) se usa la clave legada "Logro_{tipo}".
+    /// </summary>
+    public static string ClaveLogro(ObjetoSospechoso.TipoObjeto tipo)
+    {
+        string n = GameManager.NormalizarNombre(GameManager.Instance != null ? GameManager.Instance.nombreJugador : null);
+        return string.IsNullOrEmpty(n) ? $"Logro_{tipo}" : $"Logro_{n}_{tipo}";
+    }
+
     private void CargarLogros()
     {
         foreach (ObjetoSospechoso.TipoObjeto tipo in Enum.GetValues(typeof(ObjetoSospechoso.TipoObjeto)))
         {
-            string key = $"Logro_{tipo}";
-            if (PlayerPrefs.GetInt(key, 0) == 1)
+            if (PlayerPrefs.GetInt(ClaveLogro(tipo), 0) == 1)
             {
                 logrosDesbloqueados.Add(tipo);
             }
         }
+    }
+
+    /// <summary>Recarga los logros desde PlayerPrefs (p. ej. al cambiar de usuario).</summary>
+    public void RecargarLogros()
+    {
+        logrosDesbloqueados.Clear();
+        CargarLogros();
     }
 
     public void DesbloquearLogro(ObjetoSospechoso.TipoObjeto tipo)
@@ -39,7 +56,7 @@ public class AchievementManager : MonoBehaviour
         if (logrosDesbloqueados.Contains(tipo)) return;
 
         logrosDesbloqueados.Add(tipo);
-        PlayerPrefs.SetInt($"Logro_{tipo}", 1);
+        PlayerPrefs.SetInt(ClaveLogro(tipo), 1);
         PlayerPrefs.Save();
 
         Debug.Log($"[LOGROS] Logro desbloqueado: {tipo}");
@@ -51,16 +68,16 @@ public class AchievementManager : MonoBehaviour
         return logrosDesbloqueados.Contains(tipo);
     }
 
-    // Método utilitario para reiniciar logros en modo desarrollo
+    // Método utilitario para reiniciar los logros del usuario activo en modo desarrollo
     [ContextMenu("Borrar Logros")]
     public void BorrarTodosLosLogros()
     {
         logrosDesbloqueados.Clear();
         foreach (ObjetoSospechoso.TipoObjeto tipo in Enum.GetValues(typeof(ObjetoSospechoso.TipoObjeto)))
         {
-            PlayerPrefs.DeleteKey($"Logro_{tipo}");
+            PlayerPrefs.DeleteKey(ClaveLogro(tipo));
         }
         PlayerPrefs.Save();
-        Debug.Log("[LOGROS] Todos los logros han sido borrados.");
+        Debug.Log("[LOGROS] Todos los logros del usuario activo han sido borrados.");
     }
 }

@@ -40,11 +40,17 @@ public class SceneInicioManager : MonoBehaviour
             };
         }
 
-        // Mostrar récord personal
+        // RÃ©cord personal POR USUARIO: se actualiza en vivo segÃºn el nombre escrito
         Label labelRecord = root.Q<Label>("label-record");
-        int record = PlayerPrefs.GetInt("RecordPersonal", 0);
-        if (record > 0)
-            labelRecord.text = $"Tu récord personal: {record} pts";
+        if (labelRecord != null)
+        {
+            labelRecord.text = "";
+            inputNombre?.RegisterValueChangedCallback(evt =>
+            {
+                int record = PlayerPrefs.GetInt(GameManager.ClaveRecord(evt.newValue), 0);
+                labelRecord.text = record > 0 ? $"RÃ©cord de {evt.newValue.Trim()}: {record} pts" : "";
+            });
+        }
     }
 
     void OnJugar()

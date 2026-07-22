@@ -223,6 +223,11 @@
             <ui:Label name="label-estado" text="Pendiente de resolución" class="estado-label"/>
         </ui:VisualElement>
 
+        <!-- Leyenda de controles persistente (Ajuste 1 — playtesting LAB 6) -->
+        <ui:VisualElement name="controles-hint" class="controles-hint" picking-mode="Ignore">
+            <ui:Label name="controles-hint-label" text="⌨ Q Monitor · E Notepad · Esc Cliente · W Otro escritorio (N2) · Clic der. mirar · Arrastra objetos al cajón" class="controles-hint-label" picking-mode="Ignore"/>
+        </ui:VisualElement>
+
         <!-- Panel de resultado de jornada (victoria/derrota) -->
         <ui:VisualElement name="panel-resultado-jornada" class="panel-resultado hidden">
             <ui:VisualElement class="resultado-modal">
@@ -322,28 +327,16 @@
 					</ui:VisualElement>
 				</ui:VisualElement>
 
-				<!-- Opciones (2 columnas) -->
-				<ui:VisualElement style="flex-direction: row; flex-wrap: wrap; justify-content: space-between; width: 100%;">
-					<ui:Button name="gerente-opcion-0" text="Opción A"
-						style="width: 48%; margin-bottom: 10px; white-space: normal; height: auto;
-						       padding: 10px 12px; background-color: rgba(255,255,255,0.07);
-						       border-color: rgba(220,160,0,0.3); border-width: 1px; border-radius: 6px;
-						       color: white; font-size: 13px; -unity-text-align: upper-left;"/>
-					<ui:Button name="gerente-opcion-1" text="Opción B"
-						style="width: 48%; margin-bottom: 10px; white-space: normal; height: auto;
-						       padding: 10px 12px; background-color: rgba(255,255,255,0.07);
-						       border-color: rgba(220,160,0,0.3); border-width: 1px; border-radius: 6px;
-						       color: white; font-size: 13px; -unity-text-align: upper-left;"/>
-					<ui:Button name="gerente-opcion-2" text="Opción C"
-						style="width: 48%; white-space: normal; height: auto;
-						       padding: 10px 12px; background-color: rgba(255,255,255,0.07);
-						       border-color: rgba(220,160,0,0.3); border-width: 1px; border-radius: 6px;
-						       color: white; font-size: 13px; -unity-text-align: upper-left;"/>
-					<ui:Button name="gerente-opcion-3" text="Opción D"
-						style="width: 48%; white-space: normal; height: auto;
-						       padding: 10px 12px; background-color: rgba(255,255,255,0.07);
-						       border-color: rgba(220,160,0,0.3); border-width: 1px; border-radius: 6px;
-						       color: white; font-size: 13px; -unity-text-align: upper-left;"/>
+				<!-- Resultado de la respuesta (Correcto / Incorrecto / Tiempo) -->
+				<ui:Label name="gerente-resultado" text="" class="gerente-resultado hidden"/>
+
+				<!-- Opciones en una columna con wrap garantizado
+				     (Ajuste 2 — playtesting LAB 6: las opciones se salían del cuadro) -->
+				<ui:VisualElement class="gerente-opciones">
+					<ui:Button name="gerente-opcion-0" text="Opción A" class="gerente-opcion"/>
+					<ui:Button name="gerente-opcion-1" text="Opción B" class="gerente-opcion"/>
+					<ui:Button name="gerente-opcion-2" text="Opción C" class="gerente-opcion"/>
+					<ui:Button name="gerente-opcion-3" text="Opción D" class="gerente-opcion"/>
 				</ui:VisualElement>
 
 			</ui:VisualElement>
