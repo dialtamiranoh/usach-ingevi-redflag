@@ -52,6 +52,7 @@ public class GerenteNPC_FSM : MonoBehaviour
     private float timerSiguienteVisita = 0f;
     private float intervaloActual = 40f;
     private bool interaccionActiva = false;
+    private UIManager uiManager; // cacheado para pausar el timer del caso y consultar el estado de la jornada
 
     // ──────────────────────────────────────────────
     // LIFECYCLE
@@ -64,6 +65,7 @@ public class GerenteNPC_FSM : MonoBehaviour
 
     void Start()
     {
+        uiManager = FindFirstObjectByType<UIManager>();
         ActualizarIntervaloPorNivel();
         timerSiguienteVisita = intervaloActual;
 
@@ -211,6 +213,12 @@ public class GerenteNPC_FSM : MonoBehaviour
         timerSiguienteVisita -= Time.deltaTime;
         if (timerSiguienteVisita <= 0f)
         {
+            // Ajuste 2 (playtesting LAB 6): no interrumpir si la jornada ya terminó
+            if (uiManager != null && !uiManager.JuegoActivo)
+            {
+                timerSiguienteVisita = intervaloActual;
+                return;
+            }
             ExitPatrol();
             EnterApproach();
         }
@@ -247,6 +255,14 @@ public class GerenteNPC_FSM : MonoBehaviour
 
     void UpdateApproach()
     {
+        // Ajuste 2 (playtesting LAB 6): si la jornada terminó mientras se acercaba,
+        // el Gerente vuelve a patrullar en vez de lanzar una última pregunta.
+        if (uiManager != null && !uiManager.JuegoActivo)
+        {
+            EnterPatrol();
+            return;
+        }
+
         Transform destino = GetEscritorioActivo();
         if (destino == null) return;
 
@@ -290,6 +306,10 @@ public class GerenteNPC_FSM : MonoBehaviour
         SetAnimatorBoolSafe("IsWalking", false);
         SetAnimatorBoolSafe("IsInteracting", true);
 
+        // Ajuste 2 (playtesting LAB 6): pausar el timer del caso mientras dura la pregunta,
+        // para que la interrupción no consuma el tiempo de resolución del caso.
+        uiManager?.PausarTiempo(true);
+
         // Activar UI de pregunta/presión
         if (interactUI != null)
             interactUI.MostrarPregunta(OnRespuestaCorrecta, OnRespuestaIncorrecta);
@@ -306,6 +326,9 @@ public class GerenteNPC_FSM : MonoBehaviour
     {
         interaccionActiva = false;
         SetAnimatorBoolSafe("IsInteracting", false);
+
+        // Reanudar el timer del caso (Ajuste 2 — playtesting LAB 6)
+        uiManager?.PausarTiempo(false);
 
         // Ocultar UI si sigue visible
         if (interactUI != null)
@@ -332,7 +355,7 @@ public class GerenteNPC_FSM : MonoBehaviour
     {
         Debug.Log("[GerenteNPC] OnRespuestaIncorrecta ejecutada.");
         // Penalización al jugador (puntos + racha)
-        UIManager uiManager = FindFirstObjectByType<UIManager>();
+        if (uiManager == null) uiManager = FindFirstObjectByType<UIManager>();
         if (uiManager != null)
         {
             uiManager.AgregarPuntaje(-100);

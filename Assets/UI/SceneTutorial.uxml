@@ -15,7 +15,8 @@
 			<ui:Label name="label-titulo" text=""
                 style="font-size:32px; color:white;
                 -unity-font-style:bold; margin-bottom:24px;
-                -unity-text-align:upper-center;"/>
+                -unity-text-align:upper-center;
+                white-space:normal; max-width:100%;"/>
 
 			<ui:Label name="label-descripcion" text=""
                 style="font-size:16px; color:rgba(255,255,255,0.7);
@@ -46,7 +47,7 @@
         <!-- Panel de Logros -->
         <ui:VisualElement name="panel-logros" class="hidden" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.85);">
             <ui:VisualElement style="width: 600px; max-height: 80%; background-color: rgb(20, 25, 35); border-radius: 12px; padding: 30px; align-items: center; border-top-width: 4px; border-top-color: rgb(0, 210, 160);">
-                <ui:Label text="🏆 TUS LOGROS" style="font-size: 24px; -unity-font-style: bold; margin-bottom: 10px; color: rgb(220, 225, 235);"/>
+                <ui:Label name="titulo-logros" text="🏆 TUS LOGROS" style="font-size: 24px; -unity-font-style: bold; margin-bottom: 10px; color: rgb(220, 225, 235);"/>
                 <ui:VisualElement style="height: 1px; background-color: rgb(40, 50, 70); margin-top: 8px; margin-bottom: 8px; width: 100%;"/>
                 <ui:ScrollView style="flex-grow: 1; margin: 10px 0; width: 100%;">
                     <ui:VisualElement name="grilla-logros" style="flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 10px;"/>

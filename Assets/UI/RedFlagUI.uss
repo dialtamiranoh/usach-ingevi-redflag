@@ -840,3 +840,77 @@
     background-color: rgb(0, 240, 180);
     scale: 1.04;
 }
+
+/* ═══════════════════════════════════════════════════════
+   LEYENDA DE CONTROLES PERSISTENTE
+   (Ajuste 1 — playtesting LAB 6: la participante no
+   distinguía Q/E ni sabía mover la cámara o los objetos)
+   ═══════════════════════════════════════════════════════ */
+
+.controles-hint {
+    position: absolute;
+    left: 12px;
+    bottom: 72px; /* justo sobre la bottom-bar (65px) */
+    background-color: rgba(10, 20, 35, 0.78);
+    border-radius: 6px;
+    padding: 4px 10px;
+    border-width: 1px;
+    border-color: rgba(0, 210, 160, 0.35);
+}
+
+.controles-hint-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 1px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   OPCIONES DEL GERENTE EN UNA COLUMNA CON WRAP GARANTIZADO
+   (Ajuste 2 — playtesting LAB 6: las opciones KYC se
+   salían del cuadro de texto)
+   ═══════════════════════════════════════════════════════ */
+
+.gerente-opciones {
+    flex-direction: column;
+    width: 100%;
+}
+
+.gerente-opcion {
+    width: 100%;
+    margin-bottom: 8px;
+    white-space: normal;
+    height: auto;
+    min-height: 38px;
+    padding: 9px 12px;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-color: rgba(220, 160, 0, 0.3);
+    border-width: 1px;
+    border-radius: 6px;
+    color: white;
+    font-size: 13px;
+    -unity-text-align: middle-left;
+}
+
+.gerente-opcion:hover {
+    background-color: rgba(220, 160, 0, 0.18);
+    border-color: rgba(220, 160, 0, 0.7);
+}
+
+/* Mensaje de resultado en el popup del Gerente (Correcto / Incorrecto / Tiempo) */
+
+.gerente-resultado {
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: upper-center;
+    margin-bottom: 12px;
+    white-space: normal;
+    letter-spacing: 1px;
+}
+
+.gerente-resultado-correcto {
+    color: rgb(40, 220, 120);
+}
+
+.gerente-resultado-incorrecto {
+    color: rgb(240, 80, 80);
+}

@@ -5055,9 +5055,9 @@ MonoBehaviour:
   escritorioNivel2_AML: {fileID: 1782450377}
   escritorioNivel3: {fileID: 2127469453}
   rangoInteraccion: 1
-  intervaloNivel1: 15
-  intervaloNivel2: 15
-  intervaloNivel3: 15
+  intervaloNivel1: 45
+  intervaloNivel2: 30
+  intervaloNivel3: 20
   interactUI: {fileID: 1186470745}
   health: {fileID: 1186470746}
 --- !u!195 &1186470748

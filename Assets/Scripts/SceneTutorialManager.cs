@@ -9,17 +9,20 @@ public class SceneTutorialManager : MonoBehaviour
 
     private readonly string[] titulos = {
         "Departamento de Cumplimiento — Banco Central del Sur",
-        "Tu primer día como analista",
+        "Tu escritorio — Controles",
         "Analiza cada caso",
         "Cuidado con los sobornos",
         "Tu jornada comienza ahora"
     };
 
+    // Lámina 2 rediseñada a partir del playtesting (Ajuste 1, LAB 6):
+    // se unificó al mapeo REAL de CameraController (Q=Monitor, E=Notepad, ambos toggle),
+    // se implementó Esc para volver al cliente y se explica la cámara y el arrastre.
     private readonly string[] descripciones = {
         "Santiago, Chile — Lunes 7:45 AM\n\nEl Departamento de Cumplimiento del Banco Central del Sur ha detectado un aumento del 40% en operaciones sospechosas este trimestre. La UAF exige resultados. Tu predecesor fue despedido por aprobar un caso de lavado de activos.",
-        "Tu escritorio tiene todo lo que necesitas:\n\n• ESC → Vista del cliente\n• Q → Monitor con documentos KYC/AML\n• E → Notepad con el expediente\n\nCada cliente espera tu decisión.",
+        "Aprende estos controles antes de empezar:\n\n• Q → MONITOR: documentos y evidencia (KYC/AML)\n• E → NOTEPAD: expediente del caso\n• ESC (o la misma tecla) → volver a mirar al CLIENTE\n• W → cambiar al escritorio de tu compañero (desde Nivel 2)\n• Clic derecho (mantener) → mirar alrededor con la cámara\n• Clic izquierdo sobre el cliente o el expediente → interrogar\n• Mantén clic y arrastra → mover objetos del escritorio\n\nDurante la jornada tendrás esta guía siempre visible en pantalla.",
         "Revisa documentos, interroga al cliente, detecta discrepancias. Cada decisión correcta suma puntos. Las rachas multiplican tu puntaje.\n\n¡Pero cuidado! Un error grave puede costarte la jornada.",
-        "Durante la jornada pueden aparecer objetos sospechosos en tu escritorio — pendrives, celulares, sobres con efectivo. Arrastra los peligrosos al cajón. Los sobornos: NO LOS TOQUES.",
+        "Durante la jornada pueden aparecer objetos sospechosos en tu escritorio — pendrives, celulares, sobres con efectivo. Arrástralos al cajón manteniendo el clic. Los sobornos: NO LOS TOQUES.",
         "Tienes 5 casos que resolver en esta jornada. La dificultad aumenta progresivamente.\n\nMantén tu puntaje sobre 0 y demuestra que eres digno del cargo.\n\n¿Estás listo, analista?"
     };
 
@@ -34,6 +37,7 @@ public class SceneTutorialManager : MonoBehaviour
     private VisualElement panelLogros;
     private Button btnCerrarLogros;
     private VisualElement grillaLogros;
+    private Label tituloLogros;
 
     void Awake()
     {
@@ -49,19 +53,31 @@ public class SceneTutorialManager : MonoBehaviour
         panelLogros = root.Q<VisualElement>("panel-logros");
         btnCerrarLogros = root.Q<Button>("btn-cerrar-logros");
         grillaLogros = root.Q<VisualElement>("grilla-logros");
+        tituloLogros = root.Q<Label>("titulo-logros");
 
         btnSiguiente.clicked += OnSiguiente;
         btnSkip.clicked += OnSkip;
-        
+
         if (btnLogros != null) btnLogros.clicked += AbrirPanelLogros;
         if (btnCerrarLogros != null) btnCerrarLogros.clicked += CerrarPanelLogros;
 
         ActualizarPaso();
+
+        // La pantalla "TUS LOGROS" se muestra al entrar al tutorial ya poblada
+        // con los logros del usuario activo (antes aparecía siempre vacía porque
+        // la grilla solo se llenaba al pulsar "Ver Logros").
+        AbrirPanelLogros();
     }
 
     void AbrirPanelLogros()
     {
         if (panelLogros == null || grillaLogros == null) return;
+
+        // Título personalizado por usuario (los logros se guardan por nombre)
+        string nombre = GameManager.Instance != null ? GameManager.Instance.nombreJugador : null;
+        if (tituloLogros != null)
+            tituloLogros.text = string.IsNullOrEmpty(nombre) ? "🏆 TUS LOGROS" : $"🏆 LOGROS DE {nombre.ToUpper()}";
+
         panelLogros.style.display = DisplayStyle.Flex;
         ActualizarGrillaLogros();
     }
@@ -90,7 +106,8 @@ public class SceneTutorialManager : MonoBehaviour
             itemContainer.style.alignItems = Align.Center;
             itemContainer.style.justifyContent = Justify.Center;
 
-            bool desbloqueado = PlayerPrefs.GetInt($"Logro_{tipo}", 0) == 1;
+            // Clave por usuario (mismo formato que AchievementManager)
+            bool desbloqueado = PlayerPrefs.GetInt(AchievementManager.ClaveLogro(tipo), 0) == 1;
 
             if (desbloqueado)
             {
@@ -148,6 +165,12 @@ public class SceneTutorialManager : MonoBehaviour
         labelTitulo.text = titulos[pasoActual];
         labelDescripcion.text = descripciones[pasoActual];
         labelPaso.text = $"{pasoActual + 1} / {titulos.Length}";
+
+        // La lámina de controles (índice 1) se alinea a la izquierda para que
+        // la lista se lea ordenada; las láminas narrativas siguen centradas.
+        labelDescripcion.style.unityTextAlign = pasoActual == 1
+            ? TextAnchor.UpperLeft
+            : TextAnchor.UpperCenter;
 
         bool esUltimo = pasoActual == titulos.Length - 1;
         btnSiguiente.text = esUltimo ? "COMENZAR JORNADA" : "Siguiente →";

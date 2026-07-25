@@ -1,8 +1,9 @@
 /// <summary>
 /// CameraController gestiona las 3 vistas de la escena usando puntos de cámara:
 /// - Vista Cliente (por defecto): el analista ve al cliente frente a él
-/// - Vista Monitor (tecla E): zoom al monitor para revisar documentos
-/// - Vista Notepad (tecla Q): zoom al notepad para revisar el checklist
+/// - Vista Monitor (tecla Q, toggle): zoom al monitor para revisar documentos
+/// - Vista Notepad (tecla E, toggle): zoom al notepad para revisar el checklist
+/// - Esc: volver a la vista del cliente desde cualquier vista
 /// 
 /// El movimiento usa Time.deltaTime para ser independiente del framerate,
 /// garantizando la misma velocidad de transición en cualquier equipo.
@@ -197,8 +198,8 @@ public class CameraController : MonoBehaviour
     }
 
     /// <summary>
-    /// Detecta input del teclado para cambiar entre vistas.
-    /// E → Vista Monitor | Q → Vista Notepad | Escape → Vista Cliente
+    /// (Versión antigua deshabilitada) Detecta input del teclado para cambiar entre vistas.
+    /// La implementación activa está más abajo: Q ↔ Monitor | E ↔ Notepad | Esc → Cliente
     /// </summary>
     //void ManejarInput()
     //{
@@ -288,6 +289,7 @@ public class CameraController : MonoBehaviour
 
     public VistaActiva ObtenerVistaActual() => vistaActual;
 
+    // Mapeo real de vistas: Q ↔ Monitor (toggle) | E ↔ Notepad (toggle) | Esc → Cliente
     void ManejarInput()
     {
         if (Keyboard.current.qKey.wasPressedThisFrame)
@@ -306,6 +308,13 @@ public class CameraController : MonoBehaviour
                 CambiarVista(VistaActiva.Cliente);
             else
                 CambiarVista(VistaActiva.Notepad);
+        }
+
+        // Ajuste 1 (playtesting LAB 6): Esc estaba documentado en tutorial/README
+        // pero no implementado — ahora vuelve siempre a la vista del cliente.
+        if (Keyboard.current.escapeKey.wasPressedThisFrame && vistaActual != VistaActiva.Cliente)
+        {
+            CambiarVista(VistaActiva.Cliente);
         }
 
         // Rotación libre con mouse en vista cliente
