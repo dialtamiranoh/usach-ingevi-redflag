@@ -1,0 +1,45 @@
+ENTREGA LAB 6 CIERRE — Red Flag (FBD Studio)
+Diego Altamirano · Felipe Cifuentes · Byron Obregón
+=====================================================
+
+ENLACES
+-------
+- Repositorio Git:  https://github.com/dialtamiranoh/usach-ingevi-redflag
+  (rama con el trabajo del LAB 6: Correcciones_Lab_6 — mergear a main)
+- Video de respaldo (máx. 2 min):  https://drive.google.com/file/d/1OXWIXangi2KwchSyDzezeywh4P7cwcFG/view?usp=sharing
+
+
+CONTENIDO DE ESTA CARPETA
+-------------------------
+/PDF_para_UVIRTUAL/
+    - GDD_RedFlag.pdf                 (Game Design Document, 6 págs)
+    - Documento_Cierre_RedFlag.pdf    (Documento de cierre, 2 págs — máx. 4)
+
+/docs_para_repo/    (copiar tal cual dentro del repo, en la carpeta /docs)
+    - GDD_RedFlag.pdf / .md
+    - Documento_Cierre_RedFlag.pdf / .md
+    - Ficha_Playtesting.md
+    - RedFlag_Arquitectura.png   (figura de la Sección 4 del GDD)
+    - layout.jpeg                (figura de la Sección 3.3 del GDD)
+
+
+QUÉ SUBIR A UVIRTUAL (antes del vie 24-jul 23:59)
+-------------------------------------------------
+1. Enlace al repositorio Git (ver arriba)
+2. GDD_RedFlag.pdf
+3. Documento_Cierre_RedFlag.pdf
+4. Enlace al video de respaldo (ver arriba)
+
+
+PASOS PARA EL MERGE MANUAL (repo)
+---------------------------------
+1. Copiar el contenido de /docs_para_repo/ dentro de la carpeta /docs del repo.
+2. Verificar que README.md ya tiene el enlace del video (sí lo tiene).
+3. Commit + push de la rama Correcciones_Lab_6.
+4. Merge de Correcciones_Lab_6 -> main (el enunciado pide main actualizada
+   con el prototipo funcional y el GDD en /docs).
+
+
+NOTA (opcional): en el GDD, Sección 4, queda documentada como deuda técnica
+la inconsistencia "TURNO n/12" vs. 5 turnos de diseño. No es un error de
+ejecución; solo un contador. Se puede unificar si hay tiempo.
