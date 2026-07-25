@@ -16,7 +16,7 @@
 
 ## 🏗️ Diagrama de Arquitectura del Proyecto
 
-![Diagrama de Arquitectura](docs/arquitectura.png)
+![Diagrama de Arquitectura](docs/RedFlag_Arquitectura.png)
 
 ---
 
