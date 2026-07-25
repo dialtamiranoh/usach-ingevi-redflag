@@ -56,5 +56,4 @@ Diego Altamirano · Felipe Cifuentes · Byron Obregón — Julio 2026
 
 ---
 
-**Video de respaldo de la demo:** _[pegar enlace del video final aquí]_
-Videos de referencia de entregas previas: LAB 4 y LAB 5 (Google Drive, ver README / entregas).
+**Video de respaldo de la demo:** https://drive.google.com/file/d/1OXWIXangi2KwchSyDzezeywh4P7cwcFG/view?usp=sharing

@@ -65,7 +65,9 @@ La acción transcurre en un único escenario —el escritorio del analista dentr
 
 La progresión de rol añade profundidad espacial: **Nivel 1 — Analista KYC**, **Nivel 2 — Analista KYC/AML** (se habilita un segundo escritorio de Back-Office, consultable con la tecla **W**, y formularios ROS), y **Nivel 3 — Supervisor Corporativo** (evalúa casos escalados y fundamenta rechazos con un Reporte de Operación Sospechosa).
 
-> *Nota:* el layout anotado con punto de inicio/final, spawns y zona de dificultad está en la entrega LAB 4; puede incluirse como figura fotografiada/exportada en la versión final del GDD.
+![Captura del nivel de Red Flag: vista del analista frente al cliente, con el HUD (turno, tiempo, puntaje, leyenda de controles) y el Gerente NPC patrullando la oficina con su barra de vida.](layout.jpeg)
+
+*Figura — El nivel en ejecución: escritorio del analista frente al cliente 3D, HUD superior (turno, tiempo, puntaje, logros) y leyenda de controles inferior; al fondo, el Gerente de Sucursal patrullando con su barra de vida flotante.*
 
 ### 3.4 Agente autónomo — Gerente de Sucursal (3 estados)
 
@@ -85,6 +87,10 @@ El NPC autónomo es el **Gerente de Sucursal**: recorre la oficina por cuenta pr
 
 ## Sección 4 — Arquitectura técnica *(prioridad media)*
 
+![Diagrama de arquitectura de Red Flag: GameManager (Singleton) y flujo de escenas, componentes de gameplay de MainScene, subsistema del NPC Gerente y patrón Observer del UIManager.](RedFlag_Arquitectura.png)
+
+*Figura — Diagrama de arquitectura: el `GameManager` (Singleton) coordina el flujo de escenas; en `MainScene`, `UIManager` actúa como publicador del patrón Observer al que se suscriben el HUD y el subsistema del NPC (FSM + salud + UI de pregunta), con los datos dirigidos desde `casos.json` y `npcPreguntas.json`.*
+
 **Tecnología de interfaz:** UI Toolkit (UXML + USS), sin Gizmos/Debug para la UI de juego.
 
 **Componentes más importantes:**
@@ -99,7 +105,6 @@ El NPC autónomo es el **Gerente de Sucursal**: recorre la oficina por cuenta pr
 - **Inconsistencia de conteo de turnos:** el diagrama de flujo y algunas pantallas muestran "TURNO n / 12" mientras el diseño documentado habla de 5 turnos por jornada (`turnoTotal = 12` en `UIManager.cs`); conviene unificar diseño, HUD y flujo en una sola fuente de verdad.
 - **Logs de depuración:** `GerenteNPC_FSM.cs` conserva numerosos `Debug.Log` de diagnóstico de navegación que deberían silenciarse en la build final.
 - **NavMesh:** casos borde de waypoints mal ubicados / empujes fuera de la malla ya mitigados con fallback aleatorio y auto-warp, pero dependientes de un horneado correcto de la escena.
-- *(Corregido en LAB 6, Ajuste 1)* ~~Textos de control contradictorios entre tutorial, README y comentarios del código, y tecla Esc documentada pero no implementada.~~ Se unificó todo al mapeo real (**Q=Monitor, E=Notepad**, ambos toggle) y se implementó **Esc** para volver a la vista del cliente.
 
 ---
 
